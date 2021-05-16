@@ -1,14 +1,24 @@
+mod color;
 mod credentials;
 mod format;
 mod location;
 mod maptype;
+mod marker;
+mod marker_label;
+mod marker_size;
+mod marker_style;
 mod size;
 mod zoom;
 
+pub use color::*;
 pub use credentials::*;
 pub use format::*;
 pub use location::*;
 pub use maptype::*;
+pub use marker::*;
+pub use marker_label::*;
+pub use marker_size::*;
+pub use marker_style::*;
 pub use size::*;
 pub use zoom::*;
 
@@ -25,6 +35,7 @@ pub struct UrlBuilder<S: AsRef<str> + Clone> {
     maptype: Option<MapType>,
     language: Option<S>,
     region: Option<S>,
+    markers: Vec<Marker>,
 }
 
 static BASE_URL: &str = "https://maps.googleapis.com/maps/api/staticmap";
@@ -41,6 +52,7 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
             maptype: None,
             language: None,
             region: None,
+            markers: vec![],
         }
     }
 
