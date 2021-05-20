@@ -1,3 +1,5 @@
+use std::fmt;
+
 #[derive(Clone)]
 pub enum Color {
     Black,
@@ -19,23 +21,22 @@ impl Color {
     }
 }
 
-impl ToString for Color {
-    fn to_string(&self) -> String {
+impl fmt::Display for Color {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use Color::*;
+
         match &self {
-            Black => String::from("black"),
-            Brown => String::from("brown"),
-            Green => String::from("green"),
-            Purple => String::from("purple"),
-            Yellow => String::from("yellow"),
-            Blue => String::from("blue"),
-            Gray => String::from("gray"),
-            Orange => String::from("orange"),
-            Red => String::from("red"),
-            White => String::from("white"),
-            Rgb(r, g, b) => {
-                format!("0x{:02x}{:02x}{:02x}", r, g, b)
-            }
+            Black => write!(f, "black"),
+            Brown => write!(f, "brown"),
+            Green => write!(f, "green"),
+            Purple => write!(f, "purple"),
+            Yellow => write!(f, "yellow"),
+            Blue => write!(f, "blue"),
+            Gray => write!(f, "gray"),
+            Orange => write!(f, "orange"),
+            Red => write!(f, "red"),
+            White => write!(f, "white"),
+            Rgb(r, g, b) => write!(f, "0x{:02x}{:02x}{:02x}", r, g, b,),
         }
     }
 }

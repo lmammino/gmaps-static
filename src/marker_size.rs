@@ -1,3 +1,4 @@
+use std::fmt;
 use std::str::FromStr;
 
 #[derive(Clone)]
@@ -7,14 +8,18 @@ pub enum MarkerSize {
     Small,
 }
 
-impl ToString for MarkerSize {
-    fn to_string(&self) -> String {
+impl fmt::Display for MarkerSize {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use MarkerSize::*;
-        match &self {
-            Tiny => String::from("tiny"),
-            Mid => String::from("mid"),
-            Small => String::from("small"),
-        }
+        write!(
+            f,
+            "{}",
+            match &self {
+                Tiny => "tiny",
+                Mid => "mid",
+                Small => "small",
+            }
+        )
     }
 }
 
