@@ -105,6 +105,23 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         }
     }
 
+    pub fn markers(&self, markers: Vec<Marker>) -> Self {
+        UrlBuilder {
+            markers,
+            ..(*self).clone()
+        }
+    }
+
+    pub fn add_marker(&self, marker: Marker) -> Self {
+        let mut new_markers = self.markers.clone();
+        new_markers.push(marker);
+
+        UrlBuilder {
+            markers: new_markers,
+            ..(*self).clone()
+        }
+    }
+
     pub fn make_url(&self) -> String {
         // TODO: make this method fallible and return an error if there's no (center+zoom) and no marker
 
@@ -140,6 +157,8 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         if let Some(region) = self.region.as_ref() {
             url.query_pairs_mut().append_pair("region", region.as_ref());
         }
+
+        // TODO: add markers
 
         url.query_pairs_mut()
             .append_pair("key", self.credentials.api_key.as_ref());
