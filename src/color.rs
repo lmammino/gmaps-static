@@ -1,5 +1,16 @@
 use std::fmt;
 
+pub static BLACK: &Color = &Color::Black;
+pub static BROWN: &Color = &Color::Brown;
+pub static GREEN: &Color = &Color::Green;
+pub static PURPLE: &Color = &Color::Purple;
+pub static YELLOW: &Color = &Color::Yellow;
+pub static BLUE: &Color = &Color::Blue;
+pub static GRAY: &Color = &Color::Gray;
+pub static ORANGE: &Color = &Color::Orange;
+pub static RED: &Color = &Color::Red;
+pub static WHITE: &Color = &Color::White;
+
 #[derive(Clone)]
 pub enum Color {
     Black,

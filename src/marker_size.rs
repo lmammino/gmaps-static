@@ -1,6 +1,10 @@
 use std::fmt;
 use std::str::FromStr;
 
+pub static TINY: &MarkerSize = &MarkerSize::Tiny;
+pub static MID: &MarkerSize = &MarkerSize::Mid;
+pub static SMALL: &MarkerSize = &MarkerSize::Small;
+
 #[derive(Clone)]
 pub enum MarkerSize {
     Tiny,

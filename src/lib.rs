@@ -29,10 +29,10 @@ pub struct UrlBuilder<S: AsRef<str> + Clone> {
     credentials: Credentials<S>,
     size: Size,
     center: Option<Location>,
-    zoom: Option<Zoom>,
+    zoom: Option<&'static Zoom>,
     scale: Option<u8>,
-    format: Option<Format>,
-    maptype: Option<MapType>,
+    format: Option<&'static Format>,
+    maptype: Option<&'static MapType>,
     language: Option<S>,
     region: Option<S>,
     markers: Vec<Marker>,
@@ -63,7 +63,7 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         }
     }
 
-    pub fn zoom(&self, zoom: Zoom) -> Self {
+    pub fn zoom(&self, zoom: &'static Zoom) -> Self {
         UrlBuilder {
             zoom: Some(zoom),
             ..(*self).clone()
@@ -77,14 +77,14 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         }
     }
 
-    pub fn format(&self, format: Format) -> Self {
+    pub fn format(&self, format: &'static Format) -> Self {
         UrlBuilder {
             format: Some(format),
             ..(*self).clone()
         }
     }
 
-    pub fn maptype(&self, maptype: MapType) -> Self {
+    pub fn maptype(&self, maptype: &'static MapType) -> Self {
         UrlBuilder {
             maptype: Some(maptype),
             ..(*self).clone()
@@ -169,9 +169,9 @@ mod tests {
         let map = UrlBuilder::new("some_api_key".into(), (400, 300).into())
             .scale(2)
             .center("Colosseo".into())
-            .zoom(Zoom::Streets())
-            .format(Format::Gif)
-            .maptype(MapType::Hybrid)
+            .zoom(STREETS)
+            .format(GIF)
+            .maptype(HYBRID)
             .region("it")
             .language("it");
 

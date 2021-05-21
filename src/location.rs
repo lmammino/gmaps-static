@@ -1,3 +1,5 @@
+use std::fmt;
+
 #[derive(Clone)]
 pub enum Location {
     Address(String),
@@ -49,12 +51,16 @@ impl From<&'static str> for Location {
     }
 }
 
-impl ToString for Location {
-    fn to_string(&self) -> String {
+impl fmt::Display for Location {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use Location::*;
-        match self {
-            Address(s) => s.clone(),
-            LatLng(lat, lng) => format!("{:.6},{:.6}", lat, lng),
-        }
+        write!(
+            f,
+            "{}",
+            match self {
+                Address(s) => s.clone(),
+                LatLng(lat, lng) => format!("{:.6},{:.6}", lat, lng),
+            }
+        )
     }
 }

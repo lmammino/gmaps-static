@@ -1,4 +1,5 @@
 use crate::{Location, MarkerStyle};
+use std::fmt;
 
 #[derive(Clone)]
 pub struct Marker {
@@ -40,5 +41,38 @@ impl From<Location> for Marker {
             style: None,
             locations: vec![location],
         }
+    }
+}
+
+impl fmt::Display for Marker {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut parts: Vec<String> = vec![];
+
+        if let Some(style) = &self.style {
+            parts.push(style.to_string());
+        }
+
+        for location in &self.locations {
+            parts.push(location.to_string());
+        }
+
+        write!(f, "{}", parts.join("|"))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::BLUE;
+
+    use super::*;
+
+    #[test]
+    fn it_builds_a_complete_style() {
+        let style = Marker::new()
+            .style(MarkerStyle::new().color(BLUE).label('S'.into()))
+            .add_location("11211".into())
+            .add_location("11206".into())
+            .add_location("11222".into());
+        assert_eq!("color:blue|label:S|11211|11206|11222", style.to_string());
     }
 }

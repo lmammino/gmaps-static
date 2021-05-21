@@ -3,8 +3,8 @@ use std::fmt;
 
 #[derive(Clone)]
 pub struct MarkerStyle {
-    size: Option<MarkerSize>,
-    color: Option<Color>,
+    size: Option<&'static MarkerSize>,
+    color: Option<&'static Color>,
     label: Option<MarkerLabel>,
 }
 
@@ -17,14 +17,14 @@ impl MarkerStyle {
         }
     }
 
-    pub fn size(&self, size: MarkerSize) -> Self {
+    pub fn size(&self, size: &'static MarkerSize) -> Self {
         MarkerStyle {
             size: Some(size),
             ..(*self).clone()
         }
     }
 
-    pub fn color(&self, color: Color) -> Self {
+    pub fn color(&self, color: &'static Color) -> Self {
         MarkerStyle {
             color: Some(color),
             ..(*self).clone()
@@ -67,14 +67,13 @@ impl fmt::Display for MarkerStyle {
 
 #[cfg(test)]
 mod tests {
+    use crate::{BLUE, MID};
+
     use super::*;
 
     #[test]
     fn it_builds_a_complete_style() {
-        let style = MarkerStyle::new()
-            .color(Color::Blue)
-            .label('C'.into())
-            .size(MarkerSize::Mid);
+        let style = MarkerStyle::new().color(BLUE).label('C'.into()).size(MID);
         assert_eq!("size:mid|color:blue|label:C", style.to_string());
     }
 }

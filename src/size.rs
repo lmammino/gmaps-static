@@ -1,3 +1,5 @@
+use std::fmt;
+
 #[derive(Clone)]
 pub struct Size {
     width: i32,
@@ -15,9 +17,9 @@ impl Size {
     }
 }
 
-impl ToString for Size {
-    fn to_string(&self) -> String {
-        format!("{}x{}", self.width, self.height)
+impl fmt::Display for Size {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}x{}", self.width, self.height)
     }
 }
 
