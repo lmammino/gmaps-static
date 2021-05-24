@@ -1,24 +1,36 @@
 mod color;
 mod credentials;
 mod format;
+mod icon_anchor;
 mod location;
 mod maptype;
 mod marker;
+mod marker_appearence;
+mod marker_icon;
 mod marker_label;
+mod marker_scale;
 mod marker_size;
 mod marker_style;
+mod relative_position;
+mod scale;
 mod size;
 mod zoom;
 
 pub use color::*;
 pub use credentials::*;
 pub use format::*;
+pub use icon_anchor::*;
 pub use location::*;
 pub use maptype::*;
 pub use marker::*;
+pub use marker_appearence::*;
+pub use marker_icon::*;
 pub use marker_label::*;
+pub use marker_scale::*;
 pub use marker_size::*;
 pub use marker_style::*;
+pub use relative_position::*;
+pub use scale::*;
 pub use size::*;
 pub use zoom::*;
 
@@ -30,12 +42,12 @@ pub struct UrlBuilder<S: AsRef<str> + Clone> {
     size: Size,
     center: Option<Location>,
     zoom: Option<&'static Zoom>,
-    scale: Option<u8>,
+    scale: Option<&'static Scale>,
     format: Option<&'static Format>,
     maptype: Option<&'static MapType>,
     language: Option<S>,
     region: Option<S>,
-    markers: Vec<Marker>,
+    markers: Vec<Marker<S>>,
 }
 
 static BASE_URL: &str = "https://maps.googleapis.com/maps/api/staticmap";
@@ -70,7 +82,7 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         }
     }
 
-    pub fn scale(&self, scale: u8) -> Self {
+    pub fn scale(&self, scale: &'static Scale) -> Self {
         UrlBuilder {
             scale: Some(scale),
             ..(*self).clone()
@@ -105,14 +117,14 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         }
     }
 
-    pub fn markers(&self, markers: Vec<Marker>) -> Self {
+    pub fn markers(&self, markers: Vec<Marker<S>>) -> Self {
         UrlBuilder {
             markers,
             ..(*self).clone()
         }
     }
 
-    pub fn add_marker(&self, marker: Marker) -> Self {
+    pub fn add_marker(&self, marker: Marker<S>) -> Self {
         let mut new_markers = self.markers.clone();
         new_markers.push(marker);
 
@@ -134,7 +146,7 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
                 .append_pair("center", center.to_string().as_str());
         }
 
-        if let Some(scale) = self.scale {
+        if let Some(scale) = &self.scale {
             url.query_pairs_mut()
                 .append_pair("scale", scale.to_string().as_str());
         }
@@ -186,7 +198,7 @@ mod tests {
     #[test]
     fn it_builds_a_more_complete_url() {
         let map = UrlBuilder::new("some_api_key".into(), (400, 300).into())
-            .scale(2)
+            .scale(SCALE2)
             .center("Colosseo".into())
             .zoom(STREETS)
             .format(GIF)

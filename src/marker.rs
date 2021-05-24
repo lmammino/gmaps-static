@@ -1,55 +1,69 @@
-use crate::{Location, MarkerStyle};
+use crate::{Location, MarkerAppearence, MarkerScale};
 use std::fmt;
 
 #[derive(Clone)]
-pub struct Marker {
-    style: Option<MarkerStyle>,
+pub struct Marker<S: AsRef<str> + Clone> {
+    appearence: Option<MarkerAppearence<S>>,
+    scale: Option<MarkerScale>,
     locations: Vec<Location>,
 }
 
-impl Marker {
+impl<S: AsRef<str> + Clone> Marker<S> {
     pub fn new() -> Self {
         Marker {
-            style: None,
+            appearence: None,
+            scale: None,
             locations: vec![],
         }
     }
 
-    pub fn add_location(&self, location: Location) -> Marker {
+    pub fn add_location(&self, location: Location) -> Marker<S> {
         let mut new_marker = self.clone();
         new_marker.locations.push(location);
         new_marker
     }
 
-    pub fn style(&self, style: MarkerStyle) -> Marker {
+    pub fn appearence(&self, appearence: MarkerAppearence<S>) -> Marker<S> {
         Marker {
-            style: Some(style),
+            appearence: Some(appearence),
+            ..(*self).clone()
+        }
+    }
+
+    pub fn scale(&self, scale: MarkerScale) -> Marker<S> {
+        Marker {
+            scale: Some(scale),
             ..(*self).clone()
         }
     }
 }
 
-impl Default for Marker {
+impl<S: AsRef<str> + Clone> Default for Marker<S> {
     fn default() -> Self {
         Marker::new()
     }
 }
 
-impl From<Location> for Marker {
-    fn from(location: Location) -> Marker {
+impl<S: AsRef<str> + Clone> From<Location> for Marker<S> {
+    fn from(location: Location) -> Self {
         Marker {
-            style: None,
+            appearence: None,
+            scale: None,
             locations: vec![location],
         }
     }
 }
 
-impl fmt::Display for Marker {
+impl<S: AsRef<str> + Clone> fmt::Display for Marker<S> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut parts: Vec<String> = vec![];
 
-        if let Some(style) = &self.style {
-            parts.push(style.to_string());
+        if let Some(scale) = &self.scale {
+            parts.push(scale.to_string());
+        }
+
+        if let Some(appearence) = &self.appearence {
+            parts.push(appearence.to_string());
         }
 
         for location in &self.locations {
@@ -65,11 +79,14 @@ mod tests {
     use crate::BLUE;
 
     use super::*;
+    use crate::MarkerStyle;
 
     #[test]
     fn it_builds_a_complete_style() {
+        let marker_appearence: MarkerAppearence<String> =
+            MarkerStyle::new().color(BLUE).label('S'.into()).into();
         let style = Marker::new()
-            .style(MarkerStyle::new().color(BLUE).label('S'.into()))
+            .appearence(marker_appearence)
             .add_location("11211".into())
             .add_location("11206".into())
             .add_location("11222".into());
