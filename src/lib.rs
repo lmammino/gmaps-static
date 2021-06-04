@@ -170,7 +170,15 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
             url.query_pairs_mut().append_pair("region", region.as_ref());
         }
 
-        // TODO: add markers
+        if let Some(zoom) = self.zoom {
+            url.query_pairs_mut()
+                .append_pair("zoom", zoom.to_string().as_ref());
+        }
+
+        for marker in &self.markers {
+            url.query_pairs_mut()
+                .append_pair("markers", marker.to_string().as_ref());
+        }
 
         url.query_pairs_mut()
             .append_pair("key", self.credentials.api_key.as_ref());
@@ -184,20 +192,36 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use querystring::querify;
+    use url::Url;
+
+    // TODO: move this to a test util package maybe?
+    fn qs(url: String) -> Vec<(String, String)> {
+        let u = Url::parse(url.as_str()).expect("The given url is valid");
+        let raw_query = u.query().expect("There is a querystring in the given URL");
+        let mut query_args = querify(raw_query);
+        query_args.sort_unstable();
+        query_args
+            .iter()
+            .map(|(key, value)| (String::from(*key), String::from(*value)))
+            .collect()
+    }
 
     #[test]
     fn it_builds_a_simple_url() {
-        let map = UrlBuilder::new("some_api_key".into(), (50, 50).into());
+        let map = UrlBuilder::new("YOUR_API_KEY".into(), (50, 50).into());
 
-        assert_eq!(
-            map.make_url(),
-            "https://maps.googleapis.com/maps/api/staticmap?size=50x50&key=some_api_key"
+        let generated_url = qs(map.make_url());
+        let expected_url = qs(
+            "https://maps.googleapis.com/maps/api/staticmap?size=50x50&key=YOUR_API_KEY"
+                .to_string(),
         );
+        assert_eq!(generated_url, expected_url);
     }
 
     #[test]
     fn it_builds_a_more_complete_url() {
-        let map = UrlBuilder::new("some_api_key".into(), (400, 300).into())
+        let map = UrlBuilder::new("YOUR_API_KEY".into(), (400, 300).into())
             .scale(SCALE2)
             .center("Colosseo".into())
             .zoom(STREETS)
@@ -206,9 +230,47 @@ mod tests {
             .region("it")
             .language("it");
 
-        assert_eq!(
-            map.make_url(),
-            "https://maps.googleapis.com/maps/api/staticmap?size=400x300&center=Colosseo&scale=2&format=gif&maptype=hybrid&language=it&region=it&key=some_api_key"
-        );
+        let generated_url = qs(map.make_url());
+        let expected_url = qs("https://maps.googleapis.com/maps/api/staticmap?\
+            size=400x300\
+            &center=Colosseo&\
+            scale=2&\
+            zoom=15&\
+            format=gif&\
+            maptype=hybrid&\
+            language=it&\
+            region=it&\
+            key=YOUR_API_KEY"
+            .to_string());
+        assert_eq!(generated_url, expected_url);
+    }
+
+    #[test]
+    fn it_builds_a_more_complete_url_2() {
+        let marker1 = Marker::simple(&Color::Blue, 'S', (40.702147, -74.015794).into());
+        let marker2 = Marker::simple(&Color::Green, 'G', (40.711614, -74.012318).into());
+        let marker3 = Marker::simple(&Color::Red, 'C', (40.718217, -73.998284).into());
+
+        let map = UrlBuilder::new("YOUR_API_KEY".into(), (600, 300).into())
+            .center("Brooklyn Bridge,New York,NY".into())
+            .zoom(&ZOOM_13)
+            .maptype(&MapType::RoadMap)
+            .add_marker(marker1)
+            .add_marker(marker2)
+            .add_marker(marker3);
+
+        let generated_url = qs(map.make_url());
+        let expected_url = qs("https://maps.googleapis.com/maps/api/staticmap?\
+        center=Brooklyn+Bridge%2CNew+York%2CNY\
+        &zoom=13\
+        &size=600x300\
+        &maptype=roadmap\
+        &markers=color%3Ablue%7Clabel%3AS%7C40.702147%2C-74.015794\
+        &markers=color%3Agreen%7Clabel%3AG%7C40.711614%2C-74.012318\
+        &markers=color%3Ared%7Clabel%3AC%7C40.718217%2C-73.998284\
+        &key=YOUR_API_KEY"
+            .to_string());
+
+        assert_eq!(generated_url, expected_url);
     }
 }

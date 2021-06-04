@@ -1,4 +1,4 @@
-use crate::{Location, MarkerAppearence, MarkerScale};
+use crate::{Color, Location, MarkerAppearence, MarkerScale, MarkerStyle};
 use std::fmt;
 
 #[derive(Clone)]
@@ -15,6 +15,13 @@ impl<S: AsRef<str> + Clone> Marker<S> {
             scale: None,
             locations: vec![],
         }
+    }
+
+    pub fn simple(color: &'static Color, label: char, location: Location) -> Self {
+        let marker_style = MarkerStyle::new().color(color).label(label.into());
+        Marker::new()
+            .appearence(marker_style.into())
+            .add_location(location)
     }
 
     pub fn add_location(&self, location: Location) -> Marker<S> {
@@ -76,7 +83,7 @@ impl<S: AsRef<str> + Clone> fmt::Display for Marker<S> {
 
 #[cfg(test)]
 mod tests {
-    use crate::BLUE;
+    use crate::{MarkerIcon, BLUE};
 
     use super::*;
     use crate::MarkerStyle;
@@ -85,11 +92,25 @@ mod tests {
     fn it_builds_a_complete_style() {
         let marker_appearence: MarkerAppearence<String> =
             MarkerStyle::new().color(BLUE).label('S'.into()).into();
-        let style = Marker::new()
+        let marker = Marker::new()
             .appearence(marker_appearence)
             .add_location("11211".into())
             .add_location("11206".into())
             .add_location("11222".into());
-        assert_eq!("color:blue|label:S|11211|11206|11222", style.to_string());
+        assert_eq!("color:blue|label:S|11211|11206|11222", marker.to_string());
+    }
+
+    #[test]
+    fn it_builds_a_complete_style_2() {
+        let marker_appearence: MarkerAppearence<&str> = MarkerIcon::new("https://goo.gl/5y3S82")
+            .position((32, 10).into())
+            .into();
+        let marker = Marker::new()
+            .appearence(marker_appearence)
+            .add_location("Canberra ACT".into());
+        assert_eq!(
+            "anchor:32,10|icon:https://goo.gl/5y3S82|Canberra ACT",
+            marker.to_string()
+        );
     }
 }

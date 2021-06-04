@@ -3,7 +3,7 @@ use std::fmt;
 #[derive(Clone)]
 pub enum Location {
     Address(String),
-    LatLng(f32, f32),
+    LatLng(f64, f64),
 }
 
 impl Location {
@@ -11,7 +11,7 @@ impl Location {
         Location::Address(address)
     }
 
-    pub fn from_lat_lng(lat: f32, lng: f32) -> Self {
+    pub fn from_lat_lng(lat: f64, lng: f64) -> Self {
         let clamp_lat = if lat < -90.0 {
             -90.0
         } else if lat > 90.0 {
@@ -34,6 +34,13 @@ impl Location {
 
 impl From<(f32, f32)> for Location {
     fn from(lat_lng: (f32, f32)) -> Self {
+        let (lat, lng) = lat_lng;
+        Location::from_lat_lng(lat as f64, lng as f64)
+    }
+}
+
+impl From<(f64, f64)> for Location {
+    fn from(lat_lng: (f64, f64)) -> Self {
         let (lat, lng) = lat_lng;
         Location::from_lat_lng(lat, lng)
     }
