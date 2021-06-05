@@ -18,10 +18,6 @@ impl<S: AsRef<str>> Credentials<S> {
             secret_key: Some(secret_key),
         }
     }
-
-    pub fn has_secret_key(&self) -> bool {
-        self.secret_key.is_some()
-    }
 }
 
 impl<S: AsRef<str>> From<S> for Credentials<S> {

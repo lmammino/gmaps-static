@@ -13,6 +13,7 @@ mod marker_size;
 mod marker_style;
 mod relative_position;
 mod scale;
+mod signature;
 mod size;
 mod zoom;
 
@@ -31,10 +32,14 @@ pub use marker_size::*;
 pub use marker_style::*;
 pub use relative_position::*;
 pub use scale::*;
+use signature::*;
 pub use size::*;
 pub use zoom::*;
 
 use url::Url;
+
+#[macro_use]
+extern crate lazy_static;
 
 #[derive(Clone)]
 pub struct UrlBuilder<S: AsRef<str> + Clone> {
@@ -183,7 +188,14 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         url.query_pairs_mut()
             .append_pair("key", self.credentials.api_key.as_ref());
 
-        // TODO: if credentials has a secret_key, calculate and add signature
+        // If credentials has a secret_key, calculate and appends the signature
+        // This must be the last query string parameters to be added (all the others need to
+        // calculate the signature)
+        if let Some(secret) = &self.credentials.secret_key {
+            let signature = sign(&url, secret.as_ref());
+            url.query_pairs_mut()
+                .append_pair("signature", signature.as_str());
+        }
 
         url.to_string()
     }
@@ -203,6 +215,20 @@ mod tests {
         let generated_url = qs_from_url(map.make_url());
         let expected_url = qs_from_url(
             "https://maps.googleapis.com/maps/api/staticmap?size=50x50&key=YOUR_API_KEY"
+                .to_string(),
+        );
+        assert_eq!(generated_url, expected_url);
+    }
+
+    #[test]
+    fn it_builds_a_url_with_a_signature_if_secret_is_used() {
+        let credentials =
+            Credentials::with_secret_key("YOUR_API_KEY", "X8XXXxxxxxXwrIEQfguOVNGv2jY=");
+        let map = UrlBuilder::new(credentials, (50, 50).into());
+
+        let generated_url = qs_from_url(map.make_url());
+        let expected_url = qs_from_url(
+            "https://maps.googleapis.com/maps/api/staticmap?size=50x50&key=YOUR_API_KEY&signature=Ig1D2O-jLfIGKJaO7SWeWVvLwR4%3D"
                 .to_string(),
         );
         assert_eq!(generated_url, expected_url);
