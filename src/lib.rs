@@ -191,28 +191,17 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use querystring::querify;
-    use url::Url;
+    mod test_utils;
 
-    // TODO: move this to a test util package maybe?
-    fn qs(url: String) -> Vec<(String, String)> {
-        let u = Url::parse(url.as_str()).expect("The given url is valid");
-        let raw_query = u.query().expect("There is a querystring in the given URL");
-        let mut query_args = querify(raw_query);
-        query_args.sort_unstable();
-        query_args
-            .iter()
-            .map(|(key, value)| (String::from(*key), String::from(*value)))
-            .collect()
-    }
+    use super::*;
+    use test_utils::*;
 
     #[test]
     fn it_builds_a_simple_url() {
         let map = UrlBuilder::new("YOUR_API_KEY".into(), (50, 50).into());
 
-        let generated_url = qs(map.make_url());
-        let expected_url = qs(
+        let generated_url = qs_from_url(map.make_url());
+        let expected_url = qs_from_url(
             "https://maps.googleapis.com/maps/api/staticmap?size=50x50&key=YOUR_API_KEY"
                 .to_string(),
         );
@@ -230,8 +219,9 @@ mod tests {
             .region("it")
             .language("it");
 
-        let generated_url = qs(map.make_url());
-        let expected_url = qs("https://maps.googleapis.com/maps/api/staticmap?\
+        let generated_url = qs_from_url(map.make_url());
+        let expected_url = qs_from_url(
+            "https://maps.googleapis.com/maps/api/staticmap?\
             size=400x300\
             &center=Colosseo&\
             scale=2&\
@@ -241,7 +231,8 @@ mod tests {
             language=it&\
             region=it&\
             key=YOUR_API_KEY"
-            .to_string());
+                .to_string(),
+        );
         assert_eq!(generated_url, expected_url);
     }
 
@@ -259,8 +250,9 @@ mod tests {
             .add_marker(marker2)
             .add_marker(marker3);
 
-        let generated_url = qs(map.make_url());
-        let expected_url = qs("https://maps.googleapis.com/maps/api/staticmap?\
+        let generated_url = qs_from_url(map.make_url());
+        let expected_url = qs_from_url(
+            "https://maps.googleapis.com/maps/api/staticmap?\
         center=Brooklyn+Bridge%2CNew+York%2CNY\
         &zoom=13\
         &size=600x300\
@@ -269,7 +261,8 @@ mod tests {
         &markers=color%3Agreen%7Clabel%3AG%7C40.711614%2C-74.012318\
         &markers=color%3Ared%7Clabel%3AC%7C40.718217%2C-73.998284\
         &key=YOUR_API_KEY"
-            .to_string());
+                .to_string(),
+        );
 
         assert_eq!(generated_url, expected_url);
     }
