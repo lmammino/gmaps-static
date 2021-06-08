@@ -8,12 +8,12 @@ Work in progress...
 ```rust
 use GMapsStatic::*;
 
-let map = UrlBuilder::new("some_api_key".into(), (400, 300).into())
-    .scale(2)
+let map = UrlBuilder::new("YOUR_API_KEY".into(), (400, 300).into())
+    .scale(SCALE2)
     .center("Colosseo".into())
-    .zoom(Zoom::Streets())
-    .format(Format::Gif)
-    .maptype(MapType::Hybrid)
+    .zoom(STREETS)
+    .format(GIF)
+    .maptype(HYBRID)
     .region("it")
     .language("it");
 
@@ -23,7 +23,7 @@ println!("{}", map.make_url());
 This will generate the following URL:
 
 ```plain
-https://maps.googleapis.com/maps/api/staticmap?size=400x300&center=Colosseo&scale=2&format=gif&maptype=hybrid&language=it&region=it&key=some_api_key
+https://maps.googleapis.com/maps/api/staticmap?size=400x300&center=Colosseo&scale=2&format=gif&maptype=hybrid&language=it&region=it&key=YOUR_API_KEY
 ```
 
 ![A map of the area sorrounding the Coliseum generated with GMapsStatic](./images/coliseum.gif)
