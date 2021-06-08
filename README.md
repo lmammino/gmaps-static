@@ -1,5 +1,11 @@
 # GMapsStatic
 
+[![Rust](https://github.com/lmammino/gmaps-static/actions/workflows/Rust.yml/badge.svg)](https://github.com/lmammino/gmaps-static/actions/workflows/Rust.yml)
+[![codecov](https://codecov.io/gh/lmammino/gmaps-static/branch/main/graph/badge.svg?token=4CNbvgaDc1)](https://codecov.io/gh/lmammino/gmaps-static)
+[![crates.io badge](https://img.shields.io/crates/v/gmaps-static.svg)](https://crates.io/crates/gmaps-static)
+[![Documentation](https://docs.rs/gmaps-static/badge.svg)](https://docs.rs/gmaps-static)
+
+
 Work in progress...
 
 
