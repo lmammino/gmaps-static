@@ -41,21 +41,52 @@ use url::Url;
 #[macro_use]
 extern crate lazy_static;
 
+pub trait AllStr: std::convert::AsRef<str> + std::clone::Clone {}
+
 #[derive(Clone)]
 pub struct UrlBuilder<S: AsRef<str> + Clone> {
     credentials: Credentials<S>,
     size: Size,
-    center: Option<Location>,
+    center: Option<Center>,
     zoom: Option<&'static Zoom>,
     scale: Option<&'static Scale>,
     format: Option<&'static Format>,
     maptype: Option<&'static MapType>,
     language: Option<S>,
     region: Option<S>,
-    markers: Vec<Marker<S>>,
+    markers: Markers<S>,
+}
+
+trait QueryStringable {
+    fn as_query_params(&self) -> Vec<(String, String)>;
 }
 
 static BASE_URL: &str = "https://maps.googleapis.com/maps/api/staticmap";
+
+type Center = Location;
+
+impl QueryStringable for Center {
+    fn as_query_params(&self) -> Vec<(String, String)> {
+        vec![("center".to_string(), self.to_string())]
+    }
+}
+
+type Markers<S> = Vec<Marker<S>>;
+
+impl<S: AsRef<str> + Clone> QueryStringable for Markers<S> {
+    fn as_query_params(&self) -> Vec<(String, String)> {
+        unimplemented!();
+    }
+}
+
+impl<T: QueryStringable> QueryStringable for Option<T> {
+    fn as_query_params(&self) -> Vec<(String, String)> {
+        match self {
+            Some(v) => v.as_query_params(),
+            None => vec![],
+        }
+    }
+}
 
 impl<S: AsRef<str> + Clone> UrlBuilder<S> {
     pub fn new(credentials: Credentials<S>, size: Size) -> Self {
@@ -141,52 +172,53 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
 
     pub fn make_url(&self) -> String {
         // TODO: make this method fallible and return an error if there's no (center+zoom) and no marker
-
         let mut url = Url::parse(BASE_URL).unwrap();
-        url.query_pairs_mut()
-            .append_pair("size", self.size.to_string().as_str());
+        {
+            let mut pairs = url.query_pairs_mut();
+            let parts: Vec<&dyn QueryStringable> = vec![&self.center, &self.markers];
+            parts
+                .iter()
+                .flat_map(|p| p.as_query_params())
+                .for_each(|(key, value)| {
+                    pairs.append_pair(key.as_str(), value.as_str());
+                });
 
-        if let Some(center) = self.center.as_ref() {
-            url.query_pairs_mut()
-                .append_pair("center", center.to_string().as_str());
+            pairs.append_pair("size", self.size.to_string().as_str());
+
+            if let Some(center) = self.center.as_ref() {
+                pairs.append_pair("center", center.to_string().as_str());
+            }
+
+            if let Some(scale) = &self.scale {
+                pairs.append_pair("scale", scale.to_string().as_str());
+            }
+
+            if let Some(format) = self.format {
+                pairs.append_pair("format", format.to_string().as_str());
+            }
+
+            if let Some(maptype) = self.maptype {
+                pairs.append_pair("maptype", maptype.to_string().as_str());
+            }
+
+            if let Some(language) = self.language.as_ref() {
+                pairs.append_pair("language", language.as_ref());
+            }
+
+            if let Some(region) = self.region.as_ref() {
+                pairs.append_pair("region", region.as_ref());
+            }
+
+            if let Some(zoom) = self.zoom {
+                pairs.append_pair("zoom", zoom.to_string().as_ref());
+            }
+
+            for marker in &self.markers {
+                pairs.append_pair("markers", marker.to_string().as_ref());
+            }
+
+            pairs.append_pair("key", self.credentials.api_key.as_ref());
         }
-
-        if let Some(scale) = &self.scale {
-            url.query_pairs_mut()
-                .append_pair("scale", scale.to_string().as_str());
-        }
-
-        if let Some(format) = self.format {
-            url.query_pairs_mut()
-                .append_pair("format", format.to_string().as_str());
-        }
-
-        if let Some(maptype) = self.maptype {
-            url.query_pairs_mut()
-                .append_pair("maptype", maptype.to_string().as_str());
-        }
-
-        if let Some(language) = self.language.as_ref() {
-            url.query_pairs_mut()
-                .append_pair("language", language.as_ref());
-        }
-
-        if let Some(region) = self.region.as_ref() {
-            url.query_pairs_mut().append_pair("region", region.as_ref());
-        }
-
-        if let Some(zoom) = self.zoom {
-            url.query_pairs_mut()
-                .append_pair("zoom", zoom.to_string().as_ref());
-        }
-
-        for marker in &self.markers {
-            url.query_pairs_mut()
-                .append_pair("markers", marker.to_string().as_ref());
-        }
-
-        url.query_pairs_mut()
-            .append_pair("key", self.credentials.api_key.as_ref());
 
         // If credentials has a secret_key, calculate and appends the signature
         // This must be the last query string parameters to be added (all the others need to
