@@ -71,6 +71,7 @@ impl QueryStringable for Center {
     }
 }
 
+// TODO: see if it can be avoided with generic impl block for Vec<QueryStringable>
 type Markers<S> = Vec<Marker<S>>;
 
 impl<S: AsRef<str> + Clone> QueryStringable for Markers<S> {
