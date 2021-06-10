@@ -1,4 +1,4 @@
-use crate::{Color, Location, MarkerAppearence, MarkerScale, MarkerStyle};
+use crate::{Color, Location, MarkerAppearence, MarkerScale, MarkerStyle, QueryStringable};
 use std::fmt;
 
 #[derive(Clone)]
@@ -78,6 +78,12 @@ impl<S: AsRef<str> + Clone> fmt::Display for Marker<S> {
         }
 
         write!(f, "{}", parts.join("|"))
+    }
+}
+
+impl<S: AsRef<str> + Clone> QueryStringable for Marker<S> {
+    fn as_query_params(&self) -> Vec<(String, String)> {
+        vec![("markers".to_string(), self.to_string())]
     }
 }
 

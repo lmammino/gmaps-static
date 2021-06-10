@@ -54,7 +54,7 @@ pub struct UrlBuilder<S: AsRef<str> + Clone> {
     maptype: Option<&'static MapType>,
     language: Option<S>,
     region: Option<S>,
-    markers: Markers<S>,
+    markers: Vec<Marker<S>>,
 }
 
 trait QueryStringable {
@@ -71,21 +71,20 @@ impl QueryStringable for Center {
     }
 }
 
-// TODO: see if it can be avoided with generic impl block for Vec<QueryStringable>
-type Markers<S> = Vec<Marker<S>>;
-
-impl<S: AsRef<str> + Clone> QueryStringable for Markers<S> {
-    fn as_query_params(&self) -> Vec<(String, String)> {
-        unimplemented!();
-    }
-}
-
 impl<T: QueryStringable> QueryStringable for Option<T> {
     fn as_query_params(&self) -> Vec<(String, String)> {
         match self {
             Some(v) => v.as_query_params(),
             None => vec![],
         }
+    }
+}
+
+impl<T: QueryStringable> QueryStringable for Vec<T> {
+    fn as_query_params(&self) -> Vec<(String, String)> {
+        self.iter()
+            .flat_map(|item| item.as_query_params())
+            .collect()
     }
 }
 
@@ -186,10 +185,6 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
 
             pairs.append_pair("size", self.size.to_string().as_str());
 
-            if let Some(center) = self.center.as_ref() {
-                pairs.append_pair("center", center.to_string().as_str());
-            }
-
             if let Some(scale) = &self.scale {
                 pairs.append_pair("scale", scale.to_string().as_str());
             }
@@ -212,10 +207,6 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
 
             if let Some(zoom) = self.zoom {
                 pairs.append_pair("zoom", zoom.to_string().as_ref());
-            }
-
-            for marker in &self.markers {
-                pairs.append_pair("markers", marker.to_string().as_ref());
             }
 
             pairs.append_pair("key", self.credentials.api_key.as_ref());
