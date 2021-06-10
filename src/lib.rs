@@ -1,3 +1,4 @@
+mod center;
 mod color;
 mod credentials;
 mod format;
@@ -11,12 +12,14 @@ mod marker_label;
 mod marker_scale;
 mod marker_size;
 mod marker_style;
+mod querystringable;
 mod relative_position;
 mod scale;
 mod signature;
 mod size;
 mod zoom;
 
+pub use center::*;
 pub use color::*;
 pub use credentials::*;
 pub use format::*;
@@ -30,6 +33,7 @@ pub use marker_label::*;
 pub use marker_scale::*;
 pub use marker_size::*;
 pub use marker_style::*;
+pub use querystringable::*;
 pub use relative_position::*;
 pub use scale::*;
 use signature::*;
@@ -57,36 +61,7 @@ pub struct UrlBuilder<S: AsRef<str> + Clone> {
     markers: Vec<Marker<S>>,
 }
 
-trait QueryStringable {
-    fn as_query_params(&self) -> Vec<(String, String)>;
-}
-
 static BASE_URL: &str = "https://maps.googleapis.com/maps/api/staticmap";
-
-type Center = Location;
-
-impl QueryStringable for Center {
-    fn as_query_params(&self) -> Vec<(String, String)> {
-        vec![("center".to_string(), self.to_string())]
-    }
-}
-
-impl<T: QueryStringable> QueryStringable for Option<T> {
-    fn as_query_params(&self) -> Vec<(String, String)> {
-        match self {
-            Some(v) => v.as_query_params(),
-            None => vec![],
-        }
-    }
-}
-
-impl<T: QueryStringable> QueryStringable for Vec<T> {
-    fn as_query_params(&self) -> Vec<(String, String)> {
-        self.iter()
-            .flat_map(|item| item.as_query_params())
-            .collect()
-    }
-}
 
 impl<S: AsRef<str> + Clone> UrlBuilder<S> {
     pub fn new(credentials: Credentials<S>, size: Size) -> Self {
@@ -104,6 +79,8 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         }
     }
 
+    // TODO: reconsider whether this (and following methods) should be immutable
+    //       users could rely on an explicit clone if they want to keep copies around
     pub fn center(&self, center: Location) -> Self {
         UrlBuilder {
             center: Some(center),
