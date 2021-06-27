@@ -1,9 +1,10 @@
+use crate::QueryStringable;
 use std::fmt;
 
-pub static ROADMAP: &MapType = &MapType::RoadMap;
-pub static SATELLITE: &MapType = &MapType::Satellite;
-pub static TERRAIN: &MapType = &MapType::Terrain;
-pub static HYBRID: &MapType = &MapType::Hybrid;
+pub const ROADMAP: MapType = MapType::RoadMap;
+pub const SATELLITE: MapType = MapType::Satellite;
+pub const TERRAIN: MapType = MapType::Terrain;
+pub const HYBRID: MapType = MapType::Hybrid;
 
 #[derive(Clone, Copy)]
 pub enum MapType {
@@ -26,5 +27,11 @@ impl fmt::Display for MapType {
                 Hybrid => String::from("hybrid"),
             }
         )
+    }
+}
+
+impl QueryStringable for MapType {
+    fn as_query_params(&self) -> Vec<(String, String)> {
+        vec![("maptype".to_string(), self.to_string())]
     }
 }

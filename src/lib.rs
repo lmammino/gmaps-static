@@ -3,6 +3,7 @@ mod color;
 mod credentials;
 mod format;
 mod icon_anchor;
+mod language;
 mod location;
 mod maptype;
 mod marker;
@@ -13,6 +14,7 @@ mod marker_scale;
 mod marker_size;
 mod marker_style;
 mod querystringable;
+mod region;
 mod relative_position;
 mod scale;
 mod signature;
@@ -24,6 +26,7 @@ pub use color::*;
 pub use credentials::*;
 pub use format::*;
 pub use icon_anchor::*;
+pub use language::*;
 pub use location::*;
 pub use maptype::*;
 pub use marker::*;
@@ -34,6 +37,7 @@ pub use marker_scale::*;
 pub use marker_size::*;
 pub use marker_style::*;
 pub use querystringable::*;
+pub use region::*;
 pub use relative_position::*;
 pub use scale::*;
 use signature::*;
@@ -52,12 +56,12 @@ pub struct UrlBuilder<S: AsRef<str> + Clone> {
     credentials: Credentials<S>,
     size: Size,
     center: Option<Center>,
-    zoom: Option<&'static Zoom>,
-    scale: Option<&'static Scale>,
-    format: Option<&'static Format>,
-    maptype: Option<&'static MapType>,
-    language: Option<S>,
-    region: Option<S>,
+    zoom: Option<Zoom>,
+    scale: Option<Scale>,
+    format: Option<Format>,
+    maptype: Option<MapType>,
+    language: Option<Language>,
+    region: Option<Region>,
     markers: Vec<Marker<S>>,
 }
 
@@ -88,42 +92,42 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         }
     }
 
-    pub fn zoom(&self, zoom: &'static Zoom) -> Self {
+    pub fn zoom(&self, zoom: Zoom) -> Self {
         UrlBuilder {
             zoom: Some(zoom),
             ..(*self).clone()
         }
     }
 
-    pub fn scale(&self, scale: &'static Scale) -> Self {
+    pub fn scale(&self, scale: Scale) -> Self {
         UrlBuilder {
             scale: Some(scale),
             ..(*self).clone()
         }
     }
 
-    pub fn format(&self, format: &'static Format) -> Self {
+    pub fn format(&self, format: Format) -> Self {
         UrlBuilder {
             format: Some(format),
             ..(*self).clone()
         }
     }
 
-    pub fn maptype(&self, maptype: &'static MapType) -> Self {
+    pub fn maptype(&self, maptype: MapType) -> Self {
         UrlBuilder {
             maptype: Some(maptype),
             ..(*self).clone()
         }
     }
 
-    pub fn language(&self, language: S) -> Self {
+    pub fn language(&self, language: Language) -> Self {
         UrlBuilder {
             language: Some(language),
             ..(*self).clone()
         }
     }
 
-    pub fn region(&self, region: S) -> Self {
+    pub fn region(&self, region: Region) -> Self {
         UrlBuilder {
             region: Some(region),
             ..(*self).clone()
@@ -152,39 +156,23 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         let mut url = Url::parse(BASE_URL).unwrap();
         {
             let mut pairs = url.query_pairs_mut();
-            let parts: Vec<&dyn QueryStringable> = vec![&self.center, &self.markers];
+            let parts: Vec<&dyn QueryStringable> = vec![
+                &self.center,
+                &self.markers,
+                &self.size,
+                &self.scale,
+                &self.format,
+                &self.maptype,
+                &self.zoom,
+                &self.language,
+                &self.region,
+            ];
             parts
                 .iter()
                 .flat_map(|p| p.as_query_params())
                 .for_each(|(key, value)| {
                     pairs.append_pair(key.as_str(), value.as_str());
                 });
-
-            pairs.append_pair("size", self.size.to_string().as_str());
-
-            if let Some(scale) = &self.scale {
-                pairs.append_pair("scale", scale.to_string().as_str());
-            }
-
-            if let Some(format) = self.format {
-                pairs.append_pair("format", format.to_string().as_str());
-            }
-
-            if let Some(maptype) = self.maptype {
-                pairs.append_pair("maptype", maptype.to_string().as_str());
-            }
-
-            if let Some(language) = self.language.as_ref() {
-                pairs.append_pair("language", language.as_ref());
-            }
-
-            if let Some(region) = self.region.as_ref() {
-                pairs.append_pair("region", region.as_ref());
-            }
-
-            if let Some(zoom) = self.zoom {
-                pairs.append_pair("zoom", zoom.to_string().as_ref());
-            }
 
             pairs.append_pair("key", self.credentials.api_key.as_ref());
         }
@@ -243,8 +231,8 @@ mod tests {
             .zoom(STREETS)
             .format(GIF)
             .maptype(HYBRID)
-            .region("it")
-            .language("it");
+            .region("it".into())
+            .language("it".into());
 
         let generated_url = qs_from_url(map.make_url());
         let expected_url = qs_from_url(
@@ -271,8 +259,8 @@ mod tests {
 
         let map = UrlBuilder::new("YOUR_API_KEY".into(), (600, 300).into())
             .center("Brooklyn Bridge,New York,NY".into())
-            .zoom(&ZOOM_13)
-            .maptype(&MapType::RoadMap)
+            .zoom(ZOOM_13)
+            .maptype(ROADMAP)
             .add_marker(marker1)
             .add_marker(marker2)
             .add_marker(marker3);
