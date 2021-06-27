@@ -1,7 +1,8 @@
+use crate::QueryStringable;
 use std::fmt;
 
-pub static SCALE1: &Scale = &Scale::S1;
-pub static SCALE2: &Scale = &Scale::S2;
+pub const SCALE1: Scale = Scale::S1;
+pub const SCALE2: Scale = Scale::S2;
 
 #[derive(Clone)]
 pub enum Scale {
@@ -20,5 +21,11 @@ impl fmt::Display for Scale {
                 S2 => "2",
             }
         )
+    }
+}
+
+impl QueryStringable for Scale {
+    fn as_query_params(&self) -> Vec<(String, String)> {
+        vec![("scale".to_string(), self.to_string())]
     }
 }

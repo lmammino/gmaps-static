@@ -1,7 +1,9 @@
+mod center;
 mod color;
 mod credentials;
 mod format;
 mod icon_anchor;
+mod language;
 mod location;
 mod maptype;
 mod marker;
@@ -11,16 +13,20 @@ mod marker_label;
 mod marker_scale;
 mod marker_size;
 mod marker_style;
+mod querystringable;
+mod region;
 mod relative_position;
 mod scale;
 mod signature;
 mod size;
 mod zoom;
 
+pub use center::*;
 pub use color::*;
 pub use credentials::*;
 pub use format::*;
 pub use icon_anchor::*;
+pub use language::*;
 pub use location::*;
 pub use maptype::*;
 pub use marker::*;
@@ -30,6 +36,8 @@ pub use marker_label::*;
 pub use marker_scale::*;
 pub use marker_size::*;
 pub use marker_style::*;
+pub use querystringable::*;
+pub use region::*;
 pub use relative_position::*;
 pub use scale::*;
 use signature::*;
@@ -41,17 +49,19 @@ use url::Url;
 #[macro_use]
 extern crate lazy_static;
 
+pub trait AllStr: std::convert::AsRef<str> + std::clone::Clone {}
+
 #[derive(Clone)]
 pub struct UrlBuilder<S: AsRef<str> + Clone> {
     credentials: Credentials<S>,
     size: Size,
-    center: Option<Location>,
-    zoom: Option<&'static Zoom>,
-    scale: Option<&'static Scale>,
-    format: Option<&'static Format>,
-    maptype: Option<&'static MapType>,
-    language: Option<S>,
-    region: Option<S>,
+    center: Option<Center>,
+    zoom: Option<Zoom>,
+    scale: Option<Scale>,
+    format: Option<Format>,
+    maptype: Option<MapType>,
+    language: Option<Language>,
+    region: Option<Region>,
     markers: Vec<Marker<S>>,
 }
 
@@ -73,6 +83,8 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         }
     }
 
+    // TODO: reconsider whether this (and following methods) should be immutable
+    //       users could rely on an explicit clone if they want to keep copies around
     pub fn center(&self, center: Location) -> Self {
         UrlBuilder {
             center: Some(center),
@@ -80,42 +92,42 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         }
     }
 
-    pub fn zoom(&self, zoom: &'static Zoom) -> Self {
+    pub fn zoom(&self, zoom: Zoom) -> Self {
         UrlBuilder {
             zoom: Some(zoom),
             ..(*self).clone()
         }
     }
 
-    pub fn scale(&self, scale: &'static Scale) -> Self {
+    pub fn scale(&self, scale: Scale) -> Self {
         UrlBuilder {
             scale: Some(scale),
             ..(*self).clone()
         }
     }
 
-    pub fn format(&self, format: &'static Format) -> Self {
+    pub fn format(&self, format: Format) -> Self {
         UrlBuilder {
             format: Some(format),
             ..(*self).clone()
         }
     }
 
-    pub fn maptype(&self, maptype: &'static MapType) -> Self {
+    pub fn maptype(&self, maptype: MapType) -> Self {
         UrlBuilder {
             maptype: Some(maptype),
             ..(*self).clone()
         }
     }
 
-    pub fn language(&self, language: S) -> Self {
+    pub fn language(&self, language: Language) -> Self {
         UrlBuilder {
             language: Some(language),
             ..(*self).clone()
         }
     }
 
-    pub fn region(&self, region: S) -> Self {
+    pub fn region(&self, region: Region) -> Self {
         UrlBuilder {
             region: Some(region),
             ..(*self).clone()
@@ -141,52 +153,29 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
 
     pub fn make_url(&self) -> String {
         // TODO: make this method fallible and return an error if there's no (center+zoom) and no marker
-
         let mut url = Url::parse(BASE_URL).unwrap();
-        url.query_pairs_mut()
-            .append_pair("size", self.size.to_string().as_str());
+        {
+            let mut pairs = url.query_pairs_mut();
+            let parts: Vec<&dyn QueryStringable> = vec![
+                &self.center,
+                &self.markers,
+                &self.size,
+                &self.scale,
+                &self.format,
+                &self.maptype,
+                &self.zoom,
+                &self.language,
+                &self.region,
+            ];
+            parts
+                .iter()
+                .flat_map(|p| p.as_query_params())
+                .for_each(|(key, value)| {
+                    pairs.append_pair(key.as_str(), value.as_str());
+                });
 
-        if let Some(center) = self.center.as_ref() {
-            url.query_pairs_mut()
-                .append_pair("center", center.to_string().as_str());
+            pairs.append_pair("key", self.credentials.api_key.as_ref());
         }
-
-        if let Some(scale) = &self.scale {
-            url.query_pairs_mut()
-                .append_pair("scale", scale.to_string().as_str());
-        }
-
-        if let Some(format) = self.format {
-            url.query_pairs_mut()
-                .append_pair("format", format.to_string().as_str());
-        }
-
-        if let Some(maptype) = self.maptype {
-            url.query_pairs_mut()
-                .append_pair("maptype", maptype.to_string().as_str());
-        }
-
-        if let Some(language) = self.language.as_ref() {
-            url.query_pairs_mut()
-                .append_pair("language", language.as_ref());
-        }
-
-        if let Some(region) = self.region.as_ref() {
-            url.query_pairs_mut().append_pair("region", region.as_ref());
-        }
-
-        if let Some(zoom) = self.zoom {
-            url.query_pairs_mut()
-                .append_pair("zoom", zoom.to_string().as_ref());
-        }
-
-        for marker in &self.markers {
-            url.query_pairs_mut()
-                .append_pair("markers", marker.to_string().as_ref());
-        }
-
-        url.query_pairs_mut()
-            .append_pair("key", self.credentials.api_key.as_ref());
 
         // If credentials has a secret_key, calculate and appends the signature
         // This must be the last query string parameters to be added (all the others need to
@@ -242,8 +231,8 @@ mod tests {
             .zoom(STREETS)
             .format(GIF)
             .maptype(HYBRID)
-            .region("it")
-            .language("it");
+            .region("it".into())
+            .language("it".into());
 
         let generated_url = qs_from_url(map.make_url());
         let expected_url = qs_from_url(
@@ -270,8 +259,8 @@ mod tests {
 
         let map = UrlBuilder::new("YOUR_API_KEY".into(), (600, 300).into())
             .center("Brooklyn Bridge,New York,NY".into())
-            .zoom(&ZOOM_13)
-            .maptype(&MapType::RoadMap)
+            .zoom(ZOOM_13)
+            .maptype(ROADMAP)
             .add_marker(marker1)
             .add_marker(marker2)
             .add_marker(marker3);

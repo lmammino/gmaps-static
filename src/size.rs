@@ -1,3 +1,4 @@
+use crate::QueryStringable;
 use std::fmt;
 
 #[derive(Clone)]
@@ -26,5 +27,11 @@ impl fmt::Display for Size {
 impl From<(i32, i32)> for Size {
     fn from(s: (i32, i32)) -> Self {
         Size::new(s.0, s.1)
+    }
+}
+
+impl QueryStringable for Size {
+    fn as_query_params(&self) -> Vec<(String, String)> {
+        vec![("size".to_string(), self.to_string())]
     }
 }
