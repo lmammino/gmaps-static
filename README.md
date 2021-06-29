@@ -8,7 +8,6 @@
 
 Work in progress...
 
-
 ## Example
 
 ```rust
@@ -20,8 +19,8 @@ let map = UrlBuilder::new("YOUR_API_KEY".into(), (400, 300).into())
     .zoom(STREETS)
     .format(GIF)
     .maptype(HYBRID)
-    .region("it")
-    .language("it");
+    .region("it".into())
+    .language("it".into());
 
 println!("{}", map.make_url());
 ```
@@ -33,3 +32,40 @@ https://maps.googleapis.com/maps/api/staticmap?size=400x300&center=Colosseo&scal
 ```
 
 ![A map of the area sorrounding the Coliseum generated with GMapsStatic](./images/coliseum.gif)
+
+
+## Features
+
+ - [x] center
+ - [x] zoom
+ - [x] size
+ - [x] scale
+ - [x] format
+ - [x] maptype
+ - [x] language
+ - [x] region
+ - [x] markers
+ - [ ] paths
+ - [ ] viewports (`visible` parameter)
+ - [ ] styled maps
+
+
+## TODO list pre-1.0.0
+
+ - [ ] Remove ambiguous type aliases in favour of wrapper types
+ - [ ] Remove immutability and implement `clone()` in builder struct
+ - [ ] Better error management
+ - [ ] Proper crate documentation
+ - [ ] More test (support for all examples in the official docs)
+
+
+## Contributing
+
+Everyone is very welcome to contribute to this project.
+You can contribute just by submitting bugs or suggesting improvements by
+[opening an issue on GitHub](https://github.com/lmammino/gmaps-static/issues).
+
+
+## License
+
+Licensed under [MIT License](LICENSE). © Luciano Mammino.
