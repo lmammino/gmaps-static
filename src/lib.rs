@@ -85,7 +85,7 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
 
     // TODO: reconsider whether this (and following methods) should be immutable
     //       users could rely on an explicit clone if they want to keep copies around
-    pub fn center(&self, center: Location) -> Self {
+    pub fn center(&self, center: Center) -> Self {
         UrlBuilder {
             center: Some(center),
             ..(*self).clone()

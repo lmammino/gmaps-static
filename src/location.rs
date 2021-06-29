@@ -52,8 +52,8 @@ impl From<String> for Location {
     }
 }
 
-impl From<&'static str> for Location {
-    fn from(address: &'static str) -> Self {
+impl<'a> From<&'a str> for Location {
+    fn from(address: &'a str) -> Self {
         Location::from_address(String::from(address))
     }
 }
