@@ -1,5 +1,4 @@
 mod center;
-mod color;
 mod credentials;
 mod format;
 mod icon_anchor;
@@ -8,11 +7,14 @@ mod location;
 mod maptype;
 mod marker;
 mod marker_appearence;
+mod marker_color;
 mod marker_icon;
 mod marker_label;
 mod marker_scale;
 mod marker_size;
 mod marker_style;
+mod path;
+mod path_color;
 mod querystringable;
 mod region;
 mod relative_position;
@@ -22,7 +24,6 @@ mod size;
 mod zoom;
 
 pub use center::*;
-pub use color::*;
 pub use credentials::*;
 pub use format::*;
 pub use icon_anchor::*;
@@ -31,16 +32,19 @@ pub use location::*;
 pub use maptype::*;
 pub use marker::*;
 pub use marker_appearence::*;
+pub use marker_color::*;
 pub use marker_icon::*;
 pub use marker_label::*;
 pub use marker_scale::*;
 pub use marker_size::*;
 pub use marker_style::*;
+pub use path::*;
+pub use path_color::*;
 pub use querystringable::*;
 pub use region::*;
 pub use relative_position::*;
 pub use scale::*;
-use signature::*;
+pub use signature::*;
 pub use size::*;
 pub use zoom::*;
 
@@ -63,6 +67,7 @@ pub struct UrlBuilder<S: AsRef<str> + Clone> {
     language: Option<Language>,
     region: Option<Region>,
     markers: Vec<Marker<S>>,
+    paths: Vec<Path>,
 }
 
 static BASE_URL: &str = "https://maps.googleapis.com/maps/api/staticmap";
@@ -80,6 +85,7 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
             language: None,
             region: None,
             markers: vec![],
+            paths: vec![],
         }
     }
 
@@ -88,56 +94,56 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
     pub fn center(&self, center: Center) -> Self {
         UrlBuilder {
             center: Some(center),
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 
     pub fn zoom(&self, zoom: Zoom) -> Self {
         UrlBuilder {
             zoom: Some(zoom),
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 
     pub fn scale(&self, scale: Scale) -> Self {
         UrlBuilder {
             scale: Some(scale),
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 
     pub fn format(&self, format: Format) -> Self {
         UrlBuilder {
             format: Some(format),
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 
     pub fn maptype(&self, maptype: MapType) -> Self {
         UrlBuilder {
             maptype: Some(maptype),
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 
     pub fn language(&self, language: Language) -> Self {
         UrlBuilder {
             language: Some(language),
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 
     pub fn region(&self, region: Region) -> Self {
         UrlBuilder {
             region: Some(region),
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 
     pub fn markers(&self, markers: Vec<Marker<S>>) -> Self {
         UrlBuilder {
             markers,
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 
@@ -147,7 +153,7 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
 
         UrlBuilder {
             markers: new_markers,
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 
@@ -166,6 +172,7 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
                 &self.zoom,
                 &self.language,
                 &self.region,
+                &self.paths,
             ];
             parts
                 .iter()
@@ -253,9 +260,9 @@ mod tests {
 
     #[test]
     fn it_builds_a_more_complete_url_2() {
-        let marker1 = Marker::simple(&Color::Blue, 'S', (40.702147, -74.015794).into());
-        let marker2 = Marker::simple(&Color::Green, 'G', (40.711614, -74.012318).into());
-        let marker3 = Marker::simple(&Color::Red, 'C', (40.718217, -73.998284).into());
+        let marker1 = Marker::simple(&MarkerColor::Blue, 'S', (40.702147, -74.015794).into());
+        let marker2 = Marker::simple(&MarkerColor::Green, 'G', (40.711614, -74.012318).into());
+        let marker3 = Marker::simple(&MarkerColor::Red, 'C', (40.718217, -73.998284).into());
 
         let map = UrlBuilder::new("YOUR_API_KEY".into(), (600, 300).into())
             .center("Brooklyn Bridge,New York,NY".into())
