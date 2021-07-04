@@ -1,15 +1,16 @@
 use std::fmt;
 
-pub static PATH_BLACK: &PathColor = &PathColor::Black;
-pub static PATH_BROWN: &PathColor = &PathColor::Brown;
-pub static PATH_GREEN: &PathColor = &PathColor::Green;
-pub static PATH_PURPLE: &PathColor = &PathColor::Purple;
-pub static PATH_YELLOW: &PathColor = &PathColor::Yellow;
-pub static PATH_BLUE: &PathColor = &PathColor::Blue;
-pub static PATH_GRAY: &PathColor = &PathColor::Gray;
-pub static PATH_ORANGE: &PathColor = &PathColor::Orange;
-pub static PATH_RED: &PathColor = &PathColor::Red;
-pub static PATH_WHITE: &PathColor = &PathColor::White;
+pub const PATH_BLACK: PathColor = PathColor::Black;
+pub const PATH_BROWN: PathColor = PathColor::Brown;
+pub const PATH_GREEN: PathColor = PathColor::Green;
+pub const PATH_PURPLE: PathColor = PathColor::Purple;
+pub const PATH_YELLOW: PathColor = PathColor::Yellow;
+pub const PATH_BLUE: PathColor = PathColor::Blue;
+pub const PATH_GRAY: PathColor = PathColor::Gray;
+pub const PATH_ORANGE: PathColor = PathColor::Orange;
+pub const PATH_RED: PathColor = PathColor::Red;
+pub const PATH_WHITE: PathColor = PathColor::White;
+pub const PATH_TRANSPARENT: PathColor = PathColor::Rgb(0, 0, 0, 0);
 
 #[derive(Clone)]
 pub enum PathColor {

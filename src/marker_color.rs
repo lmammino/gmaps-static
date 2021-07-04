@@ -1,15 +1,15 @@
 use std::fmt;
 
-pub static BLACK: &MarkerColor = &MarkerColor::Black;
-pub static BROWN: &MarkerColor = &MarkerColor::Brown;
-pub static GREEN: &MarkerColor = &MarkerColor::Green;
-pub static PURPLE: &MarkerColor = &MarkerColor::Purple;
-pub static YELLOW: &MarkerColor = &MarkerColor::Yellow;
-pub static BLUE: &MarkerColor = &MarkerColor::Blue;
-pub static GRAY: &MarkerColor = &MarkerColor::Gray;
-pub static ORANGE: &MarkerColor = &MarkerColor::Orange;
-pub static RED: &MarkerColor = &MarkerColor::Red;
-pub static WHITE: &MarkerColor = &MarkerColor::White;
+pub const BLACK: MarkerColor = MarkerColor::Black;
+pub const BROWN: MarkerColor = MarkerColor::Brown;
+pub const GREEN: MarkerColor = MarkerColor::Green;
+pub const PURPLE: MarkerColor = MarkerColor::Purple;
+pub const YELLOW: MarkerColor = MarkerColor::Yellow;
+pub const BLUE: MarkerColor = MarkerColor::Blue;
+pub const GRAY: MarkerColor = MarkerColor::Gray;
+pub const ORANGE: MarkerColor = MarkerColor::Orange;
+pub const RED: MarkerColor = MarkerColor::Red;
+pub const WHITE: MarkerColor = MarkerColor::White;
 
 #[derive(Clone)]
 pub enum MarkerColor {

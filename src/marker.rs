@@ -17,7 +17,7 @@ impl<S: AsRef<str> + Clone> Marker<S> {
         }
     }
 
-    pub fn simple(color: &'static MarkerColor, label: char, location: Location) -> Self {
+    pub fn simple(color: MarkerColor, label: char, location: Location) -> Self {
         let marker_style = MarkerStyle::new().color(color).label(label.into());
         Marker::new()
             .appearence(marker_style.into())

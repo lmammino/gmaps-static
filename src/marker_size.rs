@@ -1,9 +1,9 @@
 use std::fmt;
 use std::str::FromStr;
 
-pub static TINY: &MarkerSize = &MarkerSize::Tiny;
-pub static MID: &MarkerSize = &MarkerSize::Mid;
-pub static SMALL: &MarkerSize = &MarkerSize::Small;
+pub const TINY: MarkerSize = MarkerSize::Tiny;
+pub const MID: MarkerSize = MarkerSize::Mid;
+pub const SMALL: MarkerSize = MarkerSize::Small;
 
 #[derive(Clone)]
 pub enum MarkerSize {

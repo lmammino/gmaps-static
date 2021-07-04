@@ -260,9 +260,9 @@ mod tests {
 
     #[test]
     fn it_builds_a_more_complete_url_2() {
-        let marker1 = Marker::simple(&MarkerColor::Blue, 'S', (40.702147, -74.015794).into());
-        let marker2 = Marker::simple(&MarkerColor::Green, 'G', (40.711614, -74.012318).into());
-        let marker3 = Marker::simple(&MarkerColor::Red, 'C', (40.718217, -73.998284).into());
+        let marker1 = Marker::simple(MarkerColor::Blue, 'S', (40.702147, -74.015794).into());
+        let marker2 = Marker::simple(MarkerColor::Green, 'G', (40.711614, -74.012318).into());
+        let marker3 = Marker::simple(MarkerColor::Red, 'C', (40.718217, -73.998284).into());
 
         let map = UrlBuilder::new("YOUR_API_KEY".into(), (600, 300).into())
             .center("Brooklyn Bridge,New York,NY".into())
