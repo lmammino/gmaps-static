@@ -1,10 +1,10 @@
-use crate::{Color, MarkerLabel, MarkerSize};
+use crate::{MarkerColor, MarkerLabel, MarkerSize};
 use std::fmt;
 
 #[derive(Clone)]
 pub struct MarkerStyle {
-    size: Option<&'static MarkerSize>,
-    color: Option<&'static Color>,
+    size: Option<MarkerSize>,
+    color: Option<MarkerColor>,
     label: Option<MarkerLabel>,
 }
 
@@ -17,24 +17,24 @@ impl MarkerStyle {
         }
     }
 
-    pub fn size(&self, size: &'static MarkerSize) -> Self {
+    pub fn size(&self, size: MarkerSize) -> Self {
         MarkerStyle {
             size: Some(size),
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 
-    pub fn color(&self, color: &'static Color) -> Self {
+    pub fn color(&self, color: MarkerColor) -> Self {
         MarkerStyle {
             color: Some(color),
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 
     pub fn label(&self, label: MarkerLabel) -> Self {
         MarkerStyle {
             label: Some(label),
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 }

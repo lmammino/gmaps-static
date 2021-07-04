@@ -1,8 +1,8 @@
 use std::fmt;
 
-pub static MARKER_SCALE1: &MarkerScale = &MarkerScale::Scale1;
-pub static MARKER_SCALE2: &MarkerScale = &MarkerScale::Scale2;
-pub static MARKER_SCALE4: &MarkerScale = &MarkerScale::Scale4;
+pub const MARKER_SCALE1: MarkerScale = MarkerScale::Scale1;
+pub const MARKER_SCALE2: MarkerScale = MarkerScale::Scale2;
+pub const MARKER_SCALE4: MarkerScale = MarkerScale::Scale4;
 
 #[derive(Clone)]
 pub enum MarkerScale {

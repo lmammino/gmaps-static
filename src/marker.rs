@@ -1,4 +1,4 @@
-use crate::{Color, Location, MarkerAppearence, MarkerScale, MarkerStyle, QueryStringable};
+use crate::{Location, MarkerAppearence, MarkerColor, MarkerScale, MarkerStyle, QueryStringable};
 use std::fmt;
 
 #[derive(Clone)]
@@ -17,11 +17,18 @@ impl<S: AsRef<str> + Clone> Marker<S> {
         }
     }
 
-    pub fn simple(color: &'static Color, label: char, location: Location) -> Self {
+    pub fn simple(color: MarkerColor, label: char, location: Location) -> Self {
         let marker_style = MarkerStyle::new().color(color).label(label.into());
         Marker::new()
             .appearence(marker_style.into())
             .add_location(location)
+    }
+
+    pub fn locations(&self, locations: Vec<Location>) -> Marker<S> {
+        Marker {
+            locations,
+            ..self.clone()
+        }
     }
 
     pub fn add_location(&self, location: Location) -> Marker<S> {
@@ -33,14 +40,14 @@ impl<S: AsRef<str> + Clone> Marker<S> {
     pub fn appearence(&self, appearence: MarkerAppearence<S>) -> Marker<S> {
         Marker {
             appearence: Some(appearence),
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 
     pub fn scale(&self, scale: MarkerScale) -> Marker<S> {
         Marker {
             scale: Some(scale),
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 }

@@ -1,18 +1,18 @@
 use std::fmt;
 
-pub static BLACK: &Color = &Color::Black;
-pub static BROWN: &Color = &Color::Brown;
-pub static GREEN: &Color = &Color::Green;
-pub static PURPLE: &Color = &Color::Purple;
-pub static YELLOW: &Color = &Color::Yellow;
-pub static BLUE: &Color = &Color::Blue;
-pub static GRAY: &Color = &Color::Gray;
-pub static ORANGE: &Color = &Color::Orange;
-pub static RED: &Color = &Color::Red;
-pub static WHITE: &Color = &Color::White;
+pub const BLACK: MarkerColor = MarkerColor::Black;
+pub const BROWN: MarkerColor = MarkerColor::Brown;
+pub const GREEN: MarkerColor = MarkerColor::Green;
+pub const PURPLE: MarkerColor = MarkerColor::Purple;
+pub const YELLOW: MarkerColor = MarkerColor::Yellow;
+pub const BLUE: MarkerColor = MarkerColor::Blue;
+pub const GRAY: MarkerColor = MarkerColor::Gray;
+pub const ORANGE: MarkerColor = MarkerColor::Orange;
+pub const RED: MarkerColor = MarkerColor::Red;
+pub const WHITE: MarkerColor = MarkerColor::White;
 
 #[derive(Clone)]
-pub enum Color {
+pub enum MarkerColor {
     Black,
     Brown,
     Green,
@@ -26,15 +26,15 @@ pub enum Color {
     Rgb(u8, u8, u8),
 }
 
-impl Color {
+impl MarkerColor {
     pub fn new(r: u8, g: u8, b: u8) -> Self {
-        Color::Rgb(r, g, b)
+        MarkerColor::Rgb(r, g, b)
     }
 }
 
-impl fmt::Display for Color {
+impl fmt::Display for MarkerColor {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use Color::*;
+        use MarkerColor::*;
 
         match &self {
             Black => write!(f, "black"),
@@ -52,16 +52,16 @@ impl fmt::Display for Color {
     }
 }
 
-impl From<(u8, u8, u8)> for Color {
+impl From<(u8, u8, u8)> for MarkerColor {
     fn from(rgb: (u8, u8, u8)) -> Self {
         let (r, g, b) = rgb;
-        Color::new(r, g, b)
+        MarkerColor::new(r, g, b)
     }
 }
 
-impl From<(i32, i32, i32)> for Color {
+impl From<(i32, i32, i32)> for MarkerColor {
     fn from(rgb: (i32, i32, i32)) -> Self {
         let (r, g, b) = rgb;
-        Color::new(r as u8, g as u8, b as u8)
+        MarkerColor::new(r as u8, g as u8, b as u8)
     }
 }

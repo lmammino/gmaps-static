@@ -15,7 +15,7 @@ impl<S: AsRef<str> + Clone> MarkerIcon<S> {
     pub fn position(&self, anchor: IconAnchor) -> Self {
         MarkerIcon {
             anchor: Some(anchor),
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 }

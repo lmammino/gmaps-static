@@ -45,7 +45,7 @@ https://maps.googleapis.com/maps/api/staticmap?size=400x300&center=Colosseo&scal
  - [x] language
  - [x] region
  - [x] markers
- - [ ] paths
+ - [x] paths
  - [ ] viewports (`visible` parameter)
  - [ ] styled maps
 
