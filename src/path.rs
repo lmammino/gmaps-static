@@ -142,4 +142,31 @@ mod tests {
 
         assert_eq!(expected, path.to_string());
     }
+
+    #[test]
+    fn it_uses_default_constructor() {
+        let path = Path::default()
+            .color((0, 0, 255, 255).into())
+            .weight(2_u8)
+            .add_point((40.737102, -73.990318).into());
+
+        let expected = "color:0x0000ffff|weight:2|40.737102,-73.990318";
+
+        assert_eq!(expected, path.to_string());
+    }
+
+    #[test]
+    fn it_is_querystringable() {
+        let path = Path::default()
+            .color((0, 0, 255, 255).into())
+            .weight(2_u8)
+            .add_point((40.737102, -73.990318).into());
+
+        let expected = (
+            String::from("path"),
+            String::from("color:0x0000ffff|weight:2|40.737102,-73.990318"),
+        );
+
+        assert_eq!(expected, path.as_query_params()[0]);
+    }
 }
