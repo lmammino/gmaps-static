@@ -70,7 +70,7 @@ pub struct UrlBuilder<S: AsRef<str> + Clone> {
     paths: Vec<Path>,
 }
 
-static BASE_URL: &str = "https://maps.googleapis.com/maps/api/staticmap";
+const BASE_URL: &str = "https://maps.googleapis.com/maps/api/staticmap";
 
 impl<S: AsRef<str> + Clone> UrlBuilder<S> {
     pub fn new(credentials: Credentials<S>, size: Size) -> Self {

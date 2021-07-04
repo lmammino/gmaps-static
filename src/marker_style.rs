@@ -20,21 +20,21 @@ impl MarkerStyle {
     pub fn size(&self, size: MarkerSize) -> Self {
         MarkerStyle {
             size: Some(size),
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 
     pub fn color(&self, color: MarkerColor) -> Self {
         MarkerStyle {
             color: Some(color),
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 
     pub fn label(&self, label: MarkerLabel) -> Self {
         MarkerStyle {
             label: Some(label),
-            ..(*self).clone()
+            ..self.clone()
         }
     }
 }
