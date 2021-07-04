@@ -157,6 +157,23 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         }
     }
 
+    pub fn paths(&self, paths: Vec<Path>) -> Self {
+        UrlBuilder {
+            paths,
+            ..self.clone()
+        }
+    }
+
+    pub fn add_path(&self, path: Path) -> Self {
+        let mut new_paths = self.paths.clone();
+        new_paths.push(path);
+
+        UrlBuilder {
+            paths: new_paths,
+            ..self.clone()
+        }
+    }
+
     pub fn make_url(&self) -> String {
         // TODO: make this method fallible and return an error if there's no (center+zoom) and no marker
         let mut url = Url::parse(BASE_URL).unwrap();
@@ -264,13 +281,19 @@ mod tests {
         let marker2 = Marker::simple(MarkerColor::Green, 'G', (40.711614, -74.012318).into());
         let marker3 = Marker::simple(MarkerColor::Red, 'C', (40.718217, -73.998284).into());
 
+        let path = Path::default()
+            .color((0, 0, 255, 255).into())
+            .weight(2_u8)
+            .add_point((40.737102, -73.990318).into());
+
         let map = UrlBuilder::new("YOUR_API_KEY".into(), (600, 300).into())
             .center("Brooklyn Bridge,New York,NY".into())
             .zoom(ZOOM_13)
             .maptype(ROADMAP)
             .add_marker(marker1)
             .add_marker(marker2)
-            .add_marker(marker3);
+            .add_marker(marker3)
+            .add_path(path);
 
         let generated_url = qs_from_url(map.make_url());
         let expected_url = qs_from_url(
@@ -282,6 +305,7 @@ mod tests {
         &markers=color%3Ablue%7Clabel%3AS%7C40.702147%2C-74.015794\
         &markers=color%3Agreen%7Clabel%3AG%7C40.711614%2C-74.012318\
         &markers=color%3Ared%7Clabel%3AC%7C40.718217%2C-73.998284\
+        &path=color%3A0x0000ffff%7Cweight%3A2%7C40.737102%2C-73.990318\
         &key=YOUR_API_KEY"
                 .to_string(),
         );
