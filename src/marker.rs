@@ -24,31 +24,24 @@ impl<S: AsRef<str> + Clone> Marker<S> {
             .add_location(location)
     }
 
-    pub fn locations(&self, locations: Vec<Location>) -> Marker<S> {
-        Marker {
-            locations,
-            ..self.clone()
-        }
+    pub fn locations(mut self, locations: Vec<Location>) -> Marker<S> {
+        self.locations = locations;
+        self
     }
 
-    pub fn add_location(&self, location: Location) -> Marker<S> {
-        let mut new_marker = self.clone();
-        new_marker.locations.push(location);
-        new_marker
+    pub fn add_location(mut self, location: Location) -> Marker<S> {
+        self.locations.push(location);
+        self
     }
 
-    pub fn appearence(&self, appearence: MarkerAppearence<S>) -> Marker<S> {
-        Marker {
-            appearence: Some(appearence),
-            ..self.clone()
-        }
+    pub fn appearence(mut self, appearence: MarkerAppearence<S>) -> Marker<S> {
+        self.appearence = Some(appearence);
+        self
     }
 
-    pub fn scale(&self, scale: MarkerScale) -> Marker<S> {
-        Marker {
-            scale: Some(scale),
-            ..self.clone()
-        }
+    pub fn scale(mut self, scale: MarkerScale) -> Marker<S> {
+        self.scale = Some(scale);
+        self
     }
 }
 

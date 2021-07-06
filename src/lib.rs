@@ -93,106 +93,69 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         }
     }
 
-    // TODO: reconsider whether this (and following methods) should be immutable
-    //       users could rely on an explicit clone if they want to keep copies around
-    pub fn center(&self, center: Center) -> Self {
-        UrlBuilder {
-            center: Some(center),
-            ..self.clone()
-        }
+    pub fn center(mut self, center: Center) -> Self {
+        self.center = Some(center);
+        self
     }
 
-    pub fn zoom(&self, zoom: Zoom) -> Self {
-        UrlBuilder {
-            zoom: Some(zoom),
-            ..self.clone()
-        }
+    pub fn zoom(mut self, zoom: Zoom) -> Self {
+        self.zoom = Some(zoom);
+        self
     }
 
-    pub fn scale(&self, scale: Scale) -> Self {
-        UrlBuilder {
-            scale: Some(scale),
-            ..self.clone()
-        }
+    pub fn scale(mut self, scale: Scale) -> Self {
+        self.scale = Some(scale);
+        self
     }
 
-    pub fn format(&self, format: Format) -> Self {
-        UrlBuilder {
-            format: Some(format),
-            ..self.clone()
-        }
+    pub fn format(mut self, format: Format) -> Self {
+        self.format = Some(format);
+        self
     }
 
-    pub fn maptype(&self, maptype: MapType) -> Self {
-        UrlBuilder {
-            maptype: Some(maptype),
-            ..self.clone()
-        }
+    pub fn maptype(mut self, maptype: MapType) -> Self {
+        self.maptype = Some(maptype);
+        self
     }
 
-    pub fn language(&self, language: Language) -> Self {
-        UrlBuilder {
-            language: Some(language),
-            ..self.clone()
-        }
+    pub fn language(mut self, language: Language) -> Self {
+        self.language = Some(language);
+        self
     }
 
-    pub fn region(&self, region: Region) -> Self {
-        UrlBuilder {
-            region: Some(region),
-            ..self.clone()
-        }
+    pub fn region(mut self, region: Region) -> Self {
+        self.region = Some(region);
+        self
     }
 
-    pub fn markers(&self, markers: Vec<Marker<S>>) -> Self {
-        UrlBuilder {
-            markers,
-            ..self.clone()
-        }
+    pub fn markers(mut self, markers: Vec<Marker<S>>) -> Self {
+        self.markers = markers;
+        self
     }
 
-    pub fn add_marker(&self, marker: Marker<S>) -> Self {
-        let mut new_markers = self.markers.clone();
-        new_markers.push(marker);
-
-        UrlBuilder {
-            markers: new_markers,
-            ..self.clone()
-        }
+    pub fn add_marker(mut self, marker: Marker<S>) -> Self {
+        self.markers.push(marker);
+        self
     }
 
-    pub fn paths(&self, paths: Vec<Path>) -> Self {
-        UrlBuilder {
-            paths,
-            ..self.clone()
-        }
+    pub fn paths(mut self, paths: Vec<Path>) -> Self {
+        self.paths = paths;
+        self
     }
 
-    pub fn add_path(&self, path: Path) -> Self {
-        let mut new_paths = self.paths.clone();
-        new_paths.push(path);
-
-        UrlBuilder {
-            paths: new_paths,
-            ..self.clone()
-        }
+    pub fn add_path(mut self, path: Path) -> Self {
+        self.paths.push(path);
+        self
     }
 
-    pub fn visible(&self, visible_locations: Vec<Visible>) -> Self {
-        UrlBuilder {
-            visible: visible_locations,
-            ..self.clone()
-        }
+    pub fn visible(mut self, visible_locations: Vec<Visible>) -> Self {
+        self.visible = visible_locations;
+        self
     }
 
-    pub fn add_visible(&self, visible_location: Visible) -> Self {
-        let mut new_visible_locations = self.visible.clone();
-        new_visible_locations.push(visible_location);
-
-        UrlBuilder {
-            visible: new_visible_locations,
-            ..self.clone()
-        }
+    pub fn add_visible(mut self, visible_location: Visible) -> Self {
+        self.visible.push(visible_location);
+        self
     }
 
     pub fn make_url(&self) -> String {

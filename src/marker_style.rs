@@ -17,25 +17,19 @@ impl MarkerStyle {
         }
     }
 
-    pub fn size(&self, size: MarkerSize) -> Self {
-        MarkerStyle {
-            size: Some(size),
-            ..self.clone()
-        }
+    pub fn size(mut self, size: MarkerSize) -> Self {
+        self.size = Some(size);
+        self
     }
 
-    pub fn color(&self, color: RgbColor) -> Self {
-        MarkerStyle {
-            color: Some(color),
-            ..self.clone()
-        }
+    pub fn color(mut self, color: RgbColor) -> Self {
+        self.color = Some(color);
+        self
     }
 
-    pub fn label(&self, label: MarkerLabel) -> Self {
-        MarkerStyle {
-            label: Some(label),
-            ..self.clone()
-        }
+    pub fn label(mut self, label: MarkerLabel) -> Self {
+        self.label = Some(label);
+        self
     }
 }
 

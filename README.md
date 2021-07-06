@@ -54,7 +54,7 @@ https://maps.googleapis.com/maps/api/staticmap?size=400x300&center=Colosseo&scal
 ## TODO list pre-1.0.0
 
  - [x] Remove ambiguous type aliases in favour of wrapper types
- - [ ] Remove immutability and implement `clone()` in builder struct
+ - [x] Remove immutability and implement `clone()` in builder struct
  - [ ] Better error management
  - [ ] Proper crate documentation
  - [ ] More test (support for all examples in the official docs)
