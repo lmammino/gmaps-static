@@ -1,10 +1,10 @@
-use crate::{MarkerColor, MarkerLabel, MarkerSize};
+use crate::{MarkerLabel, MarkerSize, RgbColor};
 use std::fmt;
 
 #[derive(Clone)]
 pub struct MarkerStyle {
     size: Option<MarkerSize>,
-    color: Option<MarkerColor>,
+    color: Option<RgbColor>,
     label: Option<MarkerLabel>,
 }
 
@@ -24,7 +24,7 @@ impl MarkerStyle {
         }
     }
 
-    pub fn color(&self, color: MarkerColor) -> Self {
+    pub fn color(&self, color: RgbColor) -> Self {
         MarkerStyle {
             color: Some(color),
             ..self.clone()
@@ -67,13 +67,16 @@ impl fmt::Display for MarkerStyle {
 
 #[cfg(test)]
 mod tests {
-    use crate::{BLUE, MID};
+    use crate::{MID, RGB_BLUE};
 
     use super::*;
 
     #[test]
     fn it_builds_a_complete_style() {
-        let style = MarkerStyle::new().color(BLUE).label('C'.into()).size(MID);
+        let style = MarkerStyle::new()
+            .color(RGB_BLUE)
+            .label('C'.into())
+            .size(MID);
         assert_eq!("size:mid|color:blue|label:C", style.to_string());
     }
 }

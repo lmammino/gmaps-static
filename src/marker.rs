@@ -1,4 +1,4 @@
-use crate::{Location, MarkerAppearence, MarkerColor, MarkerScale, MarkerStyle, QueryStringable};
+use crate::{Location, MarkerAppearence, MarkerScale, MarkerStyle, QueryStringable, RgbColor};
 use std::fmt;
 
 #[derive(Clone)]
@@ -17,7 +17,7 @@ impl<S: AsRef<str> + Clone> Marker<S> {
         }
     }
 
-    pub fn simple(color: MarkerColor, label: char, location: Location) -> Self {
+    pub fn simple(color: RgbColor, label: char, location: Location) -> Self {
         let marker_style = MarkerStyle::new().color(color).label(label.into());
         Marker::new()
             .appearence(marker_style.into())
@@ -96,7 +96,7 @@ impl<S: AsRef<str> + Clone> QueryStringable for Marker<S> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{MarkerIcon, BLUE};
+    use crate::{MarkerIcon, RGB_BLUE};
 
     use super::*;
     use crate::MarkerStyle;
@@ -104,7 +104,7 @@ mod tests {
     #[test]
     fn it_builds_a_complete_style() {
         let marker_appearence: MarkerAppearence<String> =
-            MarkerStyle::new().color(BLUE).label('S'.into()).into();
+            MarkerStyle::new().color(RGB_BLUE).label('S'.into()).into();
         let marker = Marker::new()
             .appearence(marker_appearence)
             .add_location("11211".into())

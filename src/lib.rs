@@ -7,17 +7,17 @@ mod location;
 mod maptype;
 mod marker;
 mod marker_appearence;
-mod marker_color;
 mod marker_icon;
 mod marker_label;
 mod marker_scale;
 mod marker_size;
 mod marker_style;
 mod path;
-mod path_color;
 mod querystringable;
 mod region;
 mod relative_position;
+mod rgb_color;
+mod rgba_color;
 mod scale;
 mod signature;
 mod size;
@@ -33,17 +33,17 @@ pub use location::*;
 pub use maptype::*;
 pub use marker::*;
 pub use marker_appearence::*;
-pub use marker_color::*;
 pub use marker_icon::*;
 pub use marker_label::*;
 pub use marker_scale::*;
 pub use marker_size::*;
 pub use marker_style::*;
 pub use path::*;
-pub use path_color::*;
 pub use querystringable::*;
 pub use region::*;
 pub use relative_position::*;
+pub use rgb_color::*;
+pub use rgba_color::*;
 pub use scale::*;
 pub use signature::*;
 pub use size::*;
@@ -299,9 +299,9 @@ mod tests {
 
     #[test]
     fn it_builds_a_more_complete_url_2() {
-        let marker1 = Marker::simple(MarkerColor::Blue, 'S', (40.702147, -74.015794).into());
-        let marker2 = Marker::simple(MarkerColor::Green, 'G', (40.711614, -74.012318).into());
-        let marker3 = Marker::simple(MarkerColor::Red, 'C', (40.718217, -73.998284).into());
+        let marker1 = Marker::simple(RGB_BLUE, 'S', (40.702147, -74.015794).into());
+        let marker2 = Marker::simple(RGB_GREEN, 'G', (40.711614, -74.012318).into());
+        let marker3 = Marker::simple(RGB_RED, 'C', (40.718217, -73.998284).into());
 
         let path = Path::default()
             .color((0, 0, 255, 255).into())
