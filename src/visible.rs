@@ -4,10 +4,15 @@ use std::fmt;
 #[derive(Clone)]
 pub struct Visible(Location);
 
+impl From<Location> for Visible {
+    fn from(location: Location) -> Self {
+        Visible(location)
+    }
+}
+
 impl From<(f32, f32)> for Visible {
     fn from(lat_lng: (f32, f32)) -> Self {
-        let (lat, lng) = lat_lng;
-        Visible((lat as f64, lng as f64).into())
+        Visible(lat_lng.into())
     }
 }
 

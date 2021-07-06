@@ -9,6 +9,12 @@ impl QueryStringable for Center {
     }
 }
 
+impl From<Location> for Center {
+    fn from(location: Location) -> Self {
+        Center(location)
+    }
+}
+
 impl From<(f32, f32)> for Center {
     fn from(lat_lng: (f32, f32)) -> Self {
         Center(lat_lng.into())

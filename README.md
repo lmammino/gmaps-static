@@ -48,6 +48,7 @@ https://maps.googleapis.com/maps/api/staticmap?size=400x300&center=Colosseo&scal
  - [x] paths
  - [x] viewports (`visible` parameter)
  - [ ] styled maps
+ - [ ] support for [encoded polyline paths](https://developers.google.com/maps/documentation/utilities/polylinealgorithm)
 
 
 ## TODO list pre-1.0.0
