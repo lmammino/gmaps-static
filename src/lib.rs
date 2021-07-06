@@ -21,6 +21,7 @@ mod relative_position;
 mod scale;
 mod signature;
 mod size;
+mod visible;
 mod zoom;
 
 pub use center::*;
@@ -46,6 +47,7 @@ pub use relative_position::*;
 pub use scale::*;
 pub use signature::*;
 pub use size::*;
+pub use visible::*;
 pub use zoom::*;
 
 use url::Url;
@@ -68,6 +70,7 @@ pub struct UrlBuilder<S: AsRef<str> + Clone> {
     region: Option<Region>,
     markers: Vec<Marker<S>>,
     paths: Vec<Path>,
+    visible: Vec<Visible>,
 }
 
 const BASE_URL: &str = "https://maps.googleapis.com/maps/api/staticmap";
@@ -86,6 +89,7 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
             region: None,
             markers: vec![],
             paths: vec![],
+            visible: vec![],
         }
     }
 
@@ -174,6 +178,23 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         }
     }
 
+    pub fn visible(&self, visible_locations: Vec<Visible>) -> Self {
+        UrlBuilder {
+            visible: visible_locations,
+            ..self.clone()
+        }
+    }
+
+    pub fn add_visible(&self, visible_location: Visible) -> Self {
+        let mut new_visible_locations = self.visible.clone();
+        new_visible_locations.push(visible_location);
+
+        UrlBuilder {
+            visible: new_visible_locations,
+            ..self.clone()
+        }
+    }
+
     pub fn make_url(&self) -> String {
         // TODO: make this method fallible and return an error if there's no (center+zoom) and no marker
         let mut url = Url::parse(BASE_URL).unwrap();
@@ -190,6 +211,7 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
                 &self.language,
                 &self.region,
                 &self.paths,
+                &self.visible,
             ];
             parts
                 .iter()
@@ -293,7 +315,8 @@ mod tests {
             .add_marker(marker1)
             .add_marker(marker2)
             .add_marker(marker3)
-            .add_path(path);
+            .add_path(path)
+            .add_visible("Dumbo Brooklyn, NY 11201".into());
 
         let generated_url = qs_from_url(map.make_url());
         let expected_url = qs_from_url(
@@ -306,6 +329,7 @@ mod tests {
         &markers=color%3Agreen%7Clabel%3AG%7C40.711614%2C-74.012318\
         &markers=color%3Ared%7Clabel%3AC%7C40.718217%2C-73.998284\
         &path=color%3A0x0000ffff%7Cweight%3A2%7C40.737102%2C-73.990318\
+        &visible=Dumbo+Brooklyn%2C+NY+11201\
         &key=YOUR_API_KEY"
                 .to_string(),
         );
