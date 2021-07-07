@@ -14,13 +14,15 @@ mod marker_scale;
 mod marker_size;
 mod marker_style;
 mod path;
-mod path_color;
 mod querystringable;
 mod region;
 mod relative_position;
+mod rgb_color;
+mod rgba_color;
 mod scale;
 mod signature;
 mod size;
+mod visible;
 mod zoom;
 
 pub use center::*;
@@ -39,13 +41,15 @@ pub use marker_scale::*;
 pub use marker_size::*;
 pub use marker_style::*;
 pub use path::*;
-pub use path_color::*;
 pub use querystringable::*;
 pub use region::*;
 pub use relative_position::*;
+pub use rgb_color::*;
+pub use rgba_color::*;
 pub use scale::*;
 pub use signature::*;
 pub use size::*;
+pub use visible::*;
 pub use zoom::*;
 
 use url::Url;
@@ -68,6 +72,7 @@ pub struct UrlBuilder<S: AsRef<str> + Clone> {
     region: Option<Region>,
     markers: Vec<Marker<S>>,
     paths: Vec<Path>,
+    visible: Vec<Visible>,
 }
 
 const BASE_URL: &str = "https://maps.googleapis.com/maps/api/staticmap";
@@ -86,97 +91,79 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
             region: None,
             markers: vec![],
             paths: vec![],
+            visible: vec![],
         }
     }
 
-    // TODO: reconsider whether this (and following methods) should be immutable
-    //       users could rely on an explicit clone if they want to keep copies around
-    pub fn center(&self, center: Center) -> Self {
-        UrlBuilder {
-            center: Some(center),
-            ..self.clone()
-        }
+    pub fn center(mut self, center: Center) -> Self {
+        self.center = Some(center);
+        self
     }
 
-    pub fn zoom(&self, zoom: Zoom) -> Self {
-        UrlBuilder {
-            zoom: Some(zoom),
-            ..self.clone()
-        }
+    pub fn zoom(mut self, zoom: Zoom) -> Self {
+        self.zoom = Some(zoom);
+        self
     }
 
-    pub fn scale(&self, scale: Scale) -> Self {
-        UrlBuilder {
-            scale: Some(scale),
-            ..self.clone()
-        }
+    pub fn scale(mut self, scale: Scale) -> Self {
+        self.scale = Some(scale);
+        self
     }
 
-    pub fn format(&self, format: Format) -> Self {
-        UrlBuilder {
-            format: Some(format),
-            ..self.clone()
-        }
+    pub fn format(mut self, format: Format) -> Self {
+        self.format = Some(format);
+        self
     }
 
-    pub fn maptype(&self, maptype: MapType) -> Self {
-        UrlBuilder {
-            maptype: Some(maptype),
-            ..self.clone()
-        }
+    pub fn maptype(mut self, maptype: MapType) -> Self {
+        self.maptype = Some(maptype);
+        self
     }
 
-    pub fn language(&self, language: Language) -> Self {
-        UrlBuilder {
-            language: Some(language),
-            ..self.clone()
-        }
+    pub fn language(mut self, language: Language) -> Self {
+        self.language = Some(language);
+        self
     }
 
-    pub fn region(&self, region: Region) -> Self {
-        UrlBuilder {
-            region: Some(region),
-            ..self.clone()
-        }
+    pub fn region(mut self, region: Region) -> Self {
+        self.region = Some(region);
+        self
     }
 
-    pub fn markers(&self, markers: Vec<Marker<S>>) -> Self {
-        UrlBuilder {
-            markers,
-            ..self.clone()
-        }
+    pub fn markers(mut self, markers: Vec<Marker<S>>) -> Self {
+        self.markers = markers;
+        self
     }
 
-    pub fn add_marker(&self, marker: Marker<S>) -> Self {
-        let mut new_markers = self.markers.clone();
-        new_markers.push(marker);
-
-        UrlBuilder {
-            markers: new_markers,
-            ..self.clone()
-        }
+    pub fn add_marker(mut self, marker: Marker<S>) -> Self {
+        self.markers.push(marker);
+        self
     }
 
-    pub fn paths(&self, paths: Vec<Path>) -> Self {
-        UrlBuilder {
-            paths,
-            ..self.clone()
-        }
+    pub fn paths(mut self, paths: Vec<Path>) -> Self {
+        self.paths = paths;
+        self
     }
 
-    pub fn add_path(&self, path: Path) -> Self {
-        let mut new_paths = self.paths.clone();
-        new_paths.push(path);
+    pub fn add_path(mut self, path: Path) -> Self {
+        self.paths.push(path);
+        self
+    }
 
-        UrlBuilder {
-            paths: new_paths,
-            ..self.clone()
-        }
+    pub fn visible(mut self, visible_locations: Vec<Visible>) -> Self {
+        self.visible = visible_locations;
+        self
+    }
+
+    pub fn add_visible(mut self, visible_location: Visible) -> Self {
+        self.visible.push(visible_location);
+        self
     }
 
     pub fn make_url(&self) -> String {
         // TODO: make this method fallible and return an error if there's no (center+zoom) and no marker
         let mut url = Url::parse(BASE_URL).unwrap();
+
         {
             let mut pairs = url.query_pairs_mut();
             let parts: Vec<&dyn QueryStringable> = vec![
@@ -190,7 +177,9 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
                 &self.language,
                 &self.region,
                 &self.paths,
+                &self.visible,
             ];
+
             parts
                 .iter()
                 .flat_map(|p| p.as_query_params())
@@ -277,9 +266,9 @@ mod tests {
 
     #[test]
     fn it_builds_a_more_complete_url_2() {
-        let marker1 = Marker::simple(MarkerColor::Blue, 'S', (40.702147, -74.015794).into());
-        let marker2 = Marker::simple(MarkerColor::Green, 'G', (40.711614, -74.012318).into());
-        let marker3 = Marker::simple(MarkerColor::Red, 'C', (40.718217, -73.998284).into());
+        let marker1 = Marker::simple(RGB_BLUE, 'S', (40.702147, -74.015794).into());
+        let marker2 = Marker::simple(RGB_GREEN, 'G', (40.711614, -74.012318).into());
+        let marker3 = Marker::simple(RGB_RED, 'C', (40.718217, -73.998284).into());
 
         let path = Path::default()
             .color((0, 0, 255, 255).into())
@@ -293,7 +282,8 @@ mod tests {
             .add_marker(marker1)
             .add_marker(marker2)
             .add_marker(marker3)
-            .add_path(path);
+            .add_path(path)
+            .add_visible("Dumbo Brooklyn, NY 11201".into());
 
         let generated_url = qs_from_url(map.make_url());
         let expected_url = qs_from_url(
@@ -306,6 +296,7 @@ mod tests {
         &markers=color%3Agreen%7Clabel%3AG%7C40.711614%2C-74.012318\
         &markers=color%3Ared%7Clabel%3AC%7C40.718217%2C-73.998284\
         &path=color%3A0x0000ffff%7Cweight%3A2%7C40.737102%2C-73.990318\
+        &visible=Dumbo+Brooklyn%2C+NY+11201\
         &key=YOUR_API_KEY"
                 .to_string(),
         );

@@ -1,12 +1,12 @@
 use std::fmt::Display;
 
-use crate::{Location, PathColor, QueryStringable};
+use crate::{Location, QueryStringable, RgbaColor};
 
 #[derive(Clone)]
 pub struct Path {
     weight: Option<u8>,
-    color: Option<PathColor>,
-    fill_color: Option<PathColor>,
+    color: Option<RgbaColor>,
+    fill_color: Option<RgbaColor>,
     is_geodesic: bool,
     points: Vec<Location>,
 }
@@ -22,45 +22,34 @@ impl Path {
         }
     }
 
-    pub fn weight(&self, weight: u8) -> Self {
-        Path {
-            weight: Some(weight),
-            ..self.clone()
-        }
+    pub fn weight(mut self, weight: u8) -> Self {
+        self.weight = Some(weight);
+        self
     }
 
-    pub fn color(&self, color: PathColor) -> Self {
-        Path {
-            color: Some(color),
-            ..self.clone()
-        }
+    pub fn color(mut self, color: RgbaColor) -> Self {
+        self.color = Some(color);
+        self
     }
 
-    pub fn fill_color(&self, fill_color: PathColor) -> Self {
-        Path {
-            fill_color: Some(fill_color),
-            ..self.clone()
-        }
+    pub fn fill_color(mut self, fill_color: RgbaColor) -> Self {
+        self.fill_color = Some(fill_color);
+        self
     }
 
-    pub fn is_geodesic(&self) -> Self {
-        Path {
-            is_geodesic: true,
-            ..self.clone()
-        }
+    pub fn geodesic(mut self) -> Self {
+        self.is_geodesic = true;
+        self
     }
 
-    pub fn points(&self, points: Vec<Location>) -> Self {
-        Path {
-            points,
-            ..self.clone()
-        }
+    pub fn points(mut self, points: Vec<Location>) -> Self {
+        self.points = points;
+        self
     }
 
-    pub fn add_point(&self, point: Location) -> Self {
-        let mut new_path = self.clone();
-        new_path.points.push(point);
-        new_path
+    pub fn add_point(mut self, point: Location) -> Self {
+        self.points.push(point);
+        self
     }
 }
 
@@ -106,9 +95,8 @@ impl QueryStringable for Path {
 
 #[cfg(test)]
 mod tests {
-    use crate::PATH_TRANSPARENT;
-
     use super::*;
+    use crate::RGBA_TRANSPARENT;
 
     #[test]
     fn it_creates_a_sample_path() {
@@ -128,10 +116,10 @@ mod tests {
     #[test]
     fn it_creates_a_path_with_address_location_and_bg_color() {
         let path = Path::new()
-            .color(PATH_TRANSPARENT)
+            .color(RGBA_TRANSPARENT)
             .weight(5_u8)
-            .fill_color(PathColor::new(255, 255, 0, 51))
-            .is_geodesic()
+            .fill_color(RgbaColor::new(255, 255, 0, 51))
+            .geodesic()
             .add_point("8th Avenue & 34th St,New York,NY".into())
             .add_point("8th Avenue & 42nd St,New York,NY".into())
             .add_point("Park Ave & 42nd St,New York,NY,NY".into())
