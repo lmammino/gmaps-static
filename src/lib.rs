@@ -4,6 +4,7 @@ mod format;
 mod icon_anchor;
 mod language;
 mod location;
+mod mapid;
 mod maptype;
 mod marker;
 mod marker_appearence;
@@ -31,6 +32,7 @@ pub use format::*;
 pub use icon_anchor::*;
 pub use language::*;
 pub use location::*;
+pub use mapid::*;
 pub use maptype::*;
 pub use marker::*;
 pub use marker_appearence::*;
@@ -73,6 +75,7 @@ pub struct UrlBuilder<S: AsRef<str> + Clone> {
     markers: Vec<Marker<S>>,
     paths: Vec<Path>,
     visible: Vec<Visible>,
+    mapid: Option<MapId<S>>,
 }
 
 const BASE_URL: &str = "https://maps.googleapis.com/maps/api/staticmap";
@@ -92,6 +95,7 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
             markers: vec![],
             paths: vec![],
             visible: vec![],
+            mapid: None,
         }
     }
 
@@ -160,6 +164,11 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         self
     }
 
+    pub fn mapid(mut self, mapid: MapId<S>) -> Self {
+        self.mapid = Some(mapid);
+        self
+    }
+
     pub fn make_url(&self) -> String {
         // TODO: make this method fallible and return an error if there's no (center+zoom) and no marker
         let mut url = Url::parse(BASE_URL).unwrap();
@@ -178,6 +187,7 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
                 &self.region,
                 &self.paths,
                 &self.visible,
+                &self.mapid,
             ];
 
             parts
@@ -283,7 +293,8 @@ mod tests {
             .add_marker(marker2)
             .add_marker(marker3)
             .add_path(path)
-            .add_visible("Dumbo Brooklyn, NY 11201".into());
+            .add_visible("Dumbo Brooklyn, NY 11201".into())
+            .mapid("8f348d1b5a61d4bb".into());
 
         let generated_url = qs_from_url(map.make_url());
         let expected_url = qs_from_url(
@@ -297,6 +308,7 @@ mod tests {
         &markers=color%3Ared%7Clabel%3AC%7C40.718217%2C-73.998284\
         &path=color%3A0x0000ffff%7Cweight%3A2%7C40.737102%2C-73.990318\
         &visible=Dumbo+Brooklyn%2C+NY+11201\
+        &map_id=8f348d1b5a61d4bb\
         &key=YOUR_API_KEY"
                 .to_string(),
         );
