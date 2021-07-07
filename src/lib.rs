@@ -133,7 +133,6 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
     pub fn markers(mut self, markers: Vec<Marker<S>>) -> Self {
         self.markers = markers;
         self
-        }
     }
 
     pub fn add_marker(mut self, marker: Marker<S>) -> Self {
@@ -164,6 +163,7 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
     pub fn make_url(&self) -> String {
         // TODO: make this method fallible and return an error if there's no (center+zoom) and no marker
         let mut url = Url::parse(BASE_URL).unwrap();
+
         {
             let mut pairs = url.query_pairs_mut();
             let parts: Vec<&dyn QueryStringable> = vec![

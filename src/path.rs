@@ -95,8 +95,8 @@ impl QueryStringable for Path {
 
 #[cfg(test)]
 mod tests {
-    use crate::RGBA_TRANSPARENT;
     use super::*;
+    use crate::RGBA_TRANSPARENT;
 
     #[test]
     fn it_creates_a_sample_path() {
