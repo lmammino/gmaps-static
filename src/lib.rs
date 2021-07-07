@@ -7,6 +7,7 @@ mod location;
 mod maptype;
 mod marker;
 mod marker_appearence;
+mod marker_color;
 mod marker_icon;
 mod marker_label;
 mod marker_scale;
@@ -33,6 +34,7 @@ pub use location::*;
 pub use maptype::*;
 pub use marker::*;
 pub use marker_appearence::*;
+pub use marker_color::*;
 pub use marker_icon::*;
 pub use marker_label::*;
 pub use marker_scale::*;
@@ -131,6 +133,7 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
     pub fn markers(mut self, markers: Vec<Marker<S>>) -> Self {
         self.markers = markers;
         self
+        }
     }
 
     pub fn add_marker(mut self, marker: Marker<S>) -> Self {
@@ -176,6 +179,7 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
                 &self.paths,
                 &self.visible,
             ];
+
             parts
                 .iter()
                 .flat_map(|p| p.as_query_params())

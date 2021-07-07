@@ -96,7 +96,6 @@ impl QueryStringable for Path {
 #[cfg(test)]
 mod tests {
     use crate::RGBA_TRANSPARENT;
-
     use super::*;
 
     #[test]
