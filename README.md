@@ -50,7 +50,7 @@ https://maps.googleapis.com/maps/api/staticmap?size=400x300&center=Colosseo&scal
  - [x] viewports (`visible` parameter)
  - [x] styled maps
    - [x] support for `map_id` parameter
-   - [ ] support for URL-based styles
+   - [ ] support for URL-based styles (`style` parameter)
 
 
 ## TODO list pre-1.0.0
