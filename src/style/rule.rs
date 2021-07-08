@@ -76,6 +76,12 @@ pub enum StyleRule {
     Weight(u8),
 }
 
+impl From<StyleRuleVisibility> for StyleRule {
+    fn from(visibility: StyleRuleVisibility) -> Self {
+        Self::Visibility(visibility)
+    }
+}
+
 impl Display for StyleRule {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         use StyleRule::*;
@@ -89,7 +95,7 @@ impl Display for StyleRule {
                 Gamma(gamma) => format!("gamma:{}", gamma),
                 InvertLightness(invert_lightness) =>
                     format!("invert_lightness:{}", invert_lightness),
-                Visibility(visibility) => format!("gamma:{}", visibility),
+                Visibility(visibility) => format!("visibility:{}", visibility),
                 Color(color) => format!("color:{}", color),
                 Weight(weight) => format!("weight:{}", weight),
             },

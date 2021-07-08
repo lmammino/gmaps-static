@@ -112,5 +112,43 @@ mod tests {
             .add_rule(StyleRule::InvertLightness(false));
         let expected = "feature:road.arterial|element:labels|invert_lightness:false";
         assert_eq!(expected, style.to_string());
+
+        let style = Style::new()
+            .feature(StyleFeature::RoadHighwayAll)
+            .element(StyleElement::GeometryAll)
+            .rules(vec![
+                STYLE_VISIBILITY_SIMPLIFIED.into(),
+                StyleRule::Color((0xc2, 0x80, 0xe9).into()),
+            ]);
+        let expected = "feature:road.highway|element:geometry|visibility:simplified|color:0xc280e9";
+        assert_eq!(expected, style.to_string());
+
+        let style = Style::new().feature(StyleFeature::TransitLine).rules(vec![
+            STYLE_VISIBILITY_SIMPLIFIED.into(),
+            StyleRule::Color((0xba, 0xba, 0xba).into()),
+        ]);
+        let expected = "feature:transit.line|visibility:simplified|color:0xbababa";
+        assert_eq!(expected, style.to_string());
+
+        let style = Style::new()
+            .feature(StyleFeature::RoadHighwayAll)
+            .element(StyleElement::LabelsTextStroke)
+            .rules(vec![
+                STYLE_VISIBILITY_ON.into(),
+                StyleRule::Color((0xb0, 0x6e, 0xba).into()),
+            ]);
+        let expected =
+            "feature:road.highway|element:labels.text.stroke|visibility:on|color:0xb06eba";
+        assert_eq!(expected, style.to_string());
+
+        let style = Style::new()
+            .feature(StyleFeature::RoadHighwayAll)
+            .element(StyleElement::LabelsTextFill)
+            .rules(vec![
+                STYLE_VISIBILITY_ON.into(),
+                StyleRule::Color((0xff, 0xff, 0xff).into()),
+            ]);
+        let expected = "feature:road.highway|element:labels.text.fill|visibility:on|color:0xffffff";
+        assert_eq!(expected, style.to_string());
     }
 }
