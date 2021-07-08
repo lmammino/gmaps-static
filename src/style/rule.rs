@@ -1,4 +1,6 @@
 use crate::{RgbColor, StyleRuleVisibility};
+use std::fmt::{Display, Formatter, Result};
+
 /// Style rule transformations to create custom map styles.
 ///
 /// Style rules are applied in the order that you specify.
@@ -57,7 +59,7 @@ pub enum StyleRule {
     /// **Note**: This option simply inverts the default Google style. If Google makes any changes to
     /// the base map style, the changes affect your map's features styled with [`Self::InvertLightness`].
     /// It's better to use the absolute [`Self::Color`] styler if you can.
-    InvertLightness,
+    InvertLightness(bool),
 
     /// Sets the visibility which indicates whether and how the element appears on the map.
     ///
@@ -72,4 +74,25 @@ pub enum StyleRule {
     /// Sets the weight (an integer value, greater than or equal to zero) sets the weight of the feature,
     /// in pixels. Setting the weight to a high value may result in clipping near tile borders.
     Weight(u8),
+}
+
+impl Display for StyleRule {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        use StyleRule::*;
+        write!(
+            f,
+            "{}",
+            match self {
+                Hue(color) => format!("hue:{}", color),
+                Lightness(lightness) => format!("lightness:{}", lightness),
+                Saturation(saturation) => format!("saturation:{}", saturation),
+                Gamma(gamma) => format!("gamma:{}", gamma),
+                InvertLightness(invert_lightness) =>
+                    format!("invert_lightness:{}", invert_lightness),
+                Visibility(visibility) => format!("gamma:{}", visibility),
+                Color(color) => format!("color:{}", color),
+                Weight(weight) => format!("weight:{}", weight),
+            },
+        )
+    }
 }
