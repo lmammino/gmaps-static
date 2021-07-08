@@ -78,6 +78,7 @@ pub struct UrlBuilder<S: AsRef<str> + Clone> {
     paths: Vec<Path>,
     visible: Vec<Visible>,
     mapid: Option<MapId<S>>,
+    styles: Vec<Style>,
 }
 
 const BASE_URL: &str = "https://maps.googleapis.com/maps/api/staticmap";
@@ -98,6 +99,7 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
             paths: vec![],
             visible: vec![],
             mapid: None,
+            styles: vec![],
         }
     }
 
@@ -171,6 +173,16 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         self
     }
 
+    pub fn styles(mut self, styles: Vec<Style>) -> Self {
+        self.styles = styles;
+        self
+    }
+
+    pub fn add_style(mut self, style: Style) -> Self {
+        self.styles.push(style);
+        self
+    }
+
     pub fn make_url(&self) -> String {
         // TODO: make this method fallible and return an error if there's no (center+zoom) and no marker
         let mut url = Url::parse(BASE_URL).unwrap();
@@ -190,6 +202,7 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
                 &self.paths,
                 &self.visible,
                 &self.mapid,
+                &self.styles,
             ];
 
             parts
@@ -296,6 +309,11 @@ mod tests {
             .add_marker(marker3)
             .add_path(path)
             .add_visible("Dumbo Brooklyn, NY 11201".into())
+            .add_style(
+                Style::new()
+                    .element(StyleElement::LabelsTextAll)
+                    .add_rule(StyleRule::Color((0, 255, 0).into())),
+            )
             .mapid("8f348d1b5a61d4bb".into());
 
         let generated_url = qs_from_url(map.make_url());
@@ -311,6 +329,7 @@ mod tests {
         &path=color%3A0x0000ffff%7Cweight%3A2%7C40.737102%2C-73.990318\
         &visible=Dumbo+Brooklyn%2C+NY+11201\
         &map_id=8f348d1b5a61d4bb\
+        &style=element%3Alabels.text%7Ccolor%3A0x00ff00\
         &key=YOUR_API_KEY"
                 .to_string(),
         );
