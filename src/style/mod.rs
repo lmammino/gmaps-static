@@ -27,6 +27,22 @@ impl Style {
         }
     }
 
+    pub fn for_element(element: StyleElement, rule: StyleRule) -> Self {
+        Style {
+            feature: None,
+            element: Some(element),
+            rules: vec![rule],
+        }
+    }
+
+    pub fn for_feature(feature: StyleFeature, rule: StyleRule) -> Self {
+        Style {
+            feature: Some(feature),
+            element: None,
+            rules: vec![rule],
+        }
+    }
+
     pub fn feature(mut self, feature: StyleFeature) -> Self {
         self.feature = Some(feature);
         self
@@ -85,7 +101,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_builds_some_simple_styles() {
+    fn it_builds_some_styles() {
         let style = Style::new()
             .feature(StyleFeature::RoadLocal)
             .element(StyleElement::GeometryAll)
@@ -100,9 +116,7 @@ mod tests {
         let expected = "feature:landscape|element:geometry.fill|color:0x000000";
         assert_eq!(expected, style.to_string());
 
-        let style = Style::new()
-            .element(StyleElement::LabelsAll)
-            .add_rule(StyleRule::InvertLightness(true));
+        let style = Style::for_element(StyleElement::LabelsAll, StyleRule::InvertLightness(true));
         let expected = "element:labels|invert_lightness:true";
         assert_eq!(expected, style.to_string());
 
@@ -149,6 +163,27 @@ mod tests {
                 StyleRule::Color((0xff, 0xff, 0xff).into()),
             ]);
         let expected = "feature:road.highway|element:labels.text.fill|visibility:on|color:0xffffff";
+        assert_eq!(expected, style.to_string());
+
+        let style = Style::for_feature(
+            StyleFeature::RoadAll,
+            StyleRule::Color((255, 255, 255).into()),
+        );
+        let expected = "feature:road|color:0xffffff";
+        assert_eq!(expected, style.to_string());
+
+        let style = Style::new()
+            .feature(StyleFeature::RoadLocal)
+            .element(StyleElement::LabelsAll)
+            .add_rule(StyleRule::Color((0xff, 0xff, 0xff).into()));
+        let expected = "feature:road.local|element:labels|color:0xffffff";
+        assert_eq!(expected, style.to_string());
+
+        let style = Style::new()
+            .feature(StyleFeature::RoadAll)
+            .add_rule(StyleRule::Color((0xff, 0xff, 0xff).into()))
+            .add_rule(STYLE_VISIBILITY_SIMPLIFIED.into());
+        let expected = "feature:road|color:0xffffff|visibility:simplified";
         assert_eq!(expected, style.to_string());
     }
 }
