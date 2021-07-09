@@ -1,8 +1,8 @@
 use std::fmt::{Display, Formatter, Result};
 
-pub const STYLE_VISIBILITY_ON: RuleVisibility = RuleVisibility::On;
-pub const STYLE_VISIBILITY_OFF: RuleVisibility = RuleVisibility::Off;
-pub const STYLE_VISIBILITY_SIMPLIFIED: RuleVisibility = RuleVisibility::Simplified;
+pub const VISIBILITY_ON: RuleVisibility = RuleVisibility::On;
+pub const VISIBILITY_OFF: RuleVisibility = RuleVisibility::Off;
+pub const VISIBILITY_SIMPLIFIED: RuleVisibility = RuleVisibility::Simplified;
 
 #[derive(Clone)]
 pub enum RuleVisibility {

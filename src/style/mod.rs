@@ -133,14 +133,14 @@ mod tests {
             .feature(Feature::RoadHighwayAll)
             .element(Element::GeometryAll)
             .rules(vec![
-                STYLE_VISIBILITY_SIMPLIFIED.into(),
+                VISIBILITY_SIMPLIFIED.into(),
                 Rule::Color((0xc2, 0x80, 0xe9).into()),
             ]);
         let expected = "feature:road.highway|element:geometry|visibility:simplified|color:0xc280e9";
         assert_eq!(expected, style.to_string());
 
         let style = Style::new().feature(Feature::TransitLine).rules(vec![
-            STYLE_VISIBILITY_SIMPLIFIED.into(),
+            VISIBILITY_SIMPLIFIED.into(),
             Rule::Color((0xba, 0xba, 0xba).into()),
         ]);
         let expected = "feature:transit.line|visibility:simplified|color:0xbababa";
@@ -150,7 +150,7 @@ mod tests {
             .feature(Feature::RoadHighwayAll)
             .element(Element::LabelsTextStroke)
             .rules(vec![
-                STYLE_VISIBILITY_ON.into(),
+                VISIBILITY_ON.into(),
                 Rule::Color((0xb0, 0x6e, 0xba).into()),
             ]);
         let expected =
@@ -161,7 +161,7 @@ mod tests {
             .feature(Feature::RoadHighwayAll)
             .element(Element::LabelsTextFill)
             .rules(vec![
-                STYLE_VISIBILITY_ON.into(),
+                VISIBILITY_ON.into(),
                 Rule::Color((0xff, 0xff, 0xff).into()),
             ]);
         let expected = "feature:road.highway|element:labels.text.fill|visibility:on|color:0xffffff";
@@ -181,7 +181,7 @@ mod tests {
         let style = Style::new()
             .feature(Feature::RoadAll)
             .add_rule(Rule::Color((0xff, 0xff, 0xff).into()))
-            .add_rule(STYLE_VISIBILITY_SIMPLIFIED.into());
+            .add_rule(VISIBILITY_SIMPLIFIED.into());
         let expected = "feature:road|color:0xffffff|visibility:simplified";
         assert_eq!(expected, style.to_string());
     }

@@ -6,7 +6,7 @@ pub const LEFT: Position = Position::Left;
 pub const RIGTH: Position = Position::Right;
 pub const CENTER: Position = Position::Center;
 pub const TOP_LEFT: Position = Position::TopLeft;
-pub const TOP_RIGTH: Position = Position::TopRight;
+pub const TOP_RIGHT: Position = Position::TopRight;
 pub const BOTTOM_LEFT: Position = Position::BottomLeft;
 pub const BOTTOM_RIGHT: Position = Position::BottomRight;
 

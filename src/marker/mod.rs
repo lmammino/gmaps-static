@@ -126,7 +126,7 @@ mod tests {
     #[test]
     fn it_builds_a_complete_style_2() {
         let marker_appearence: Appearence<&str> = Icon::new("https://goo.gl/5y3S82")
-            .position((32, 10).into())
+            .anchor((32, 10).into())
             .into();
         let marker = Marker::new()
             .appearence(marker_appearence)

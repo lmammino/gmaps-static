@@ -13,7 +13,14 @@ impl<S: AsRef<str> + Clone> Icon<S> {
         Icon { anchor: None, url }
     }
 
-    pub fn position(mut self, anchor: IconAnchor) -> Self {
+    pub fn with_anchor(url: S, anchor: IconAnchor) -> Self {
+        Icon {
+            anchor: Some(anchor),
+            url,
+        }
+    }
+
+    pub fn anchor(mut self, anchor: IconAnchor) -> Self {
         self.anchor = Some(anchor);
         self
     }
