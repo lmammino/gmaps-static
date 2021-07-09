@@ -42,7 +42,7 @@ extern crate lazy_static;
 pub trait AllStr: std::convert::AsRef<str> + std::clone::Clone {}
 
 #[derive(Clone)]
-pub struct UrlBuilder<S: AsRef<str> + Clone> {
+pub struct Builder<S: AsRef<str> + Clone> {
     credentials: Credentials<S>,
     size: Size,
     center: Option<Center>,
@@ -61,9 +61,9 @@ pub struct UrlBuilder<S: AsRef<str> + Clone> {
 
 const BASE_URL: &str = "https://maps.googleapis.com/maps/api/staticmap";
 
-impl<S: AsRef<str> + Clone> UrlBuilder<S> {
+impl<S: AsRef<str> + Clone> Builder<S> {
     pub fn new(credentials: Credentials<S>, size: Size) -> Self {
-        UrlBuilder {
+        Builder {
             credentials,
             size,
             center: None,
@@ -215,7 +215,7 @@ mod tests {
 
     #[test]
     fn it_builds_a_simple_url() {
-        let map = UrlBuilder::new("YOUR_API_KEY".into(), (50, 50).into());
+        let map = Builder::new("YOUR_API_KEY".into(), (50, 50).into());
 
         let generated_url = qs_from_url(map.make_url());
         let expected_url = qs_from_url(
@@ -229,7 +229,7 @@ mod tests {
     fn it_builds_a_url_with_a_signature_if_secret_is_used() {
         let credentials =
             Credentials::with_secret_key("YOUR_API_KEY", "X8XXXxxxxxXwrIEQfguOVNGv2jY=");
-        let map = UrlBuilder::new(credentials, (50, 50).into());
+        let map = Builder::new(credentials, (50, 50).into());
 
         let generated_url = qs_from_url(map.make_url());
         let expected_url = qs_from_url(
@@ -241,7 +241,7 @@ mod tests {
 
     #[test]
     fn it_builds_a_more_complete_url() {
-        let map = UrlBuilder::new("YOUR_API_KEY".into(), (400, 300).into())
+        let map = Builder::new("YOUR_API_KEY".into(), (400, 300).into())
             .scale(SCALE2)
             .center("Colosseo".into())
             .zoom(STREETS)
@@ -278,7 +278,7 @@ mod tests {
             .weight(2_u8)
             .add_point((40.737102, -73.990318).into());
 
-        let map = UrlBuilder::new("YOUR_API_KEY".into(), (600, 300).into())
+        let map = Builder::new("YOUR_API_KEY".into(), (600, 300).into())
             .center("Brooklyn Bridge,New York,NY".into())
             .zoom(ZOOM_13)
             .maptype(ROADMAP)

@@ -13,7 +13,7 @@ Work in progress...
 ```rust
 use gmaps_static::*;
 
-let map = UrlBuilder::new("YOUR_API_KEY".into(), (400, 300).into())
+let map = Builder::new("YOUR_API_KEY".into(), (400, 300).into())
     .scale(SCALE2)
     .center("Colosseo".into())
     .zoom(STREETS)
