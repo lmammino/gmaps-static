@@ -11,7 +11,7 @@ Work in progress...
 ## Example
 
 ```rust
-use GMapsStatic::*;
+use gmaps_static::*;
 
 let map = UrlBuilder::new("YOUR_API_KEY".into(), (400, 300).into())
     .scale(SCALE2)
@@ -59,6 +59,7 @@ https://maps.googleapis.com/maps/api/staticmap?size=400x300&center=Colosseo&scal
  - [x] Remove immutability and implement `clone()` in builder struct
  - [ ] Better error management
  - [ ] Proper crate documentation
+ - [ ] Examples
  - [ ] More test (support for all examples in the official docs)
 
 

@@ -1,14 +1,15 @@
-use crate::RelativePosition;
 use std::fmt;
+
+use super::Position;
 
 #[derive(Clone)]
 pub enum IconAnchor {
-    Relative(RelativePosition),
+    Relative(Position),
     Absolute(i32, i32),
 }
 
-impl From<RelativePosition> for IconAnchor {
-    fn from(position: RelativePosition) -> Self {
+impl From<Position> for IconAnchor {
+    fn from(position: Position) -> Self {
         IconAnchor::Relative(position)
     }
 }

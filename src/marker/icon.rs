@@ -1,15 +1,16 @@
-use crate::IconAnchor;
 use std::fmt;
 
+use super::IconAnchor;
+
 #[derive(Clone)]
-pub struct MarkerIcon<S: AsRef<str> + Clone> {
+pub struct Icon<S: AsRef<str> + Clone> {
     anchor: Option<IconAnchor>,
     url: S,
 }
 
-impl<S: AsRef<str> + Clone> MarkerIcon<S> {
+impl<S: AsRef<str> + Clone> Icon<S> {
     pub fn new(url: S) -> Self {
-        MarkerIcon { anchor: None, url }
+        Icon { anchor: None, url }
     }
 
     pub fn position(mut self, anchor: IconAnchor) -> Self {
@@ -18,7 +19,7 @@ impl<S: AsRef<str> + Clone> MarkerIcon<S> {
     }
 }
 
-impl<S: AsRef<str> + Clone> fmt::Display for MarkerIcon<S> {
+impl<S: AsRef<str> + Clone> fmt::Display for Icon<S> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut parts: Vec<String> = vec![];
 

@@ -1,23 +1,25 @@
-use crate::{MarkerLabel, MarkerSize, RgbColor};
+use crate::RgbColor;
+
+use super::{Label, Size};
 use std::fmt;
 
 #[derive(Clone)]
-pub struct MarkerStyle {
-    size: Option<MarkerSize>,
+pub struct Style {
+    size: Option<Size>,
     color: Option<RgbColor>,
-    label: Option<MarkerLabel>,
+    label: Option<Label>,
 }
 
-impl MarkerStyle {
+impl Style {
     pub fn new() -> Self {
-        MarkerStyle {
+        Style {
             size: None,
             color: None,
             label: None,
         }
     }
 
-    pub fn size(mut self, size: MarkerSize) -> Self {
+    pub fn size(mut self, size: Size) -> Self {
         self.size = Some(size);
         self
     }
@@ -27,19 +29,19 @@ impl MarkerStyle {
         self
     }
 
-    pub fn label(mut self, label: MarkerLabel) -> Self {
+    pub fn label(mut self, label: Label) -> Self {
         self.label = Some(label);
         self
     }
 }
 
-impl Default for MarkerStyle {
+impl Default for Style {
     fn default() -> Self {
-        MarkerStyle::new()
+        Style::new()
     }
 }
 
-impl fmt::Display for MarkerStyle {
+impl fmt::Display for Style {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut parts: Vec<String> = vec![];
 
@@ -61,16 +63,13 @@ impl fmt::Display for MarkerStyle {
 
 #[cfg(test)]
 mod tests {
-    use crate::{MID, RGB_BLUE};
+    use crate::{marker::MID, RGB_BLUE};
 
     use super::*;
 
     #[test]
     fn it_builds_a_complete_style() {
-        let style = MarkerStyle::new()
-            .color(RGB_BLUE)
-            .label('C'.into())
-            .size(MID);
+        let style = Style::new().color(RGB_BLUE).label('C'.into()).size(MID);
         assert_eq!("size:mid|color:blue|label:C", style.to_string());
     }
 }

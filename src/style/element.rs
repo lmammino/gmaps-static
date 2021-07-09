@@ -5,7 +5,7 @@ use std::fmt::{Display, Formatter, Result};
 /// A road, for example, consists of the graphical line (the geometry) on the map,
 /// and also the text denoting its name (a label)
 #[derive(Clone)]
-pub enum StyleElement {
+pub enum Element {
     /// `all` (default) selects all elements of the specified feature.
     All,
     /// `geometry` selects all geometric elements of the specified feature.
@@ -27,9 +27,9 @@ pub enum StyleElement {
     LabelsTextStroke,
 }
 
-impl Display for StyleElement {
+impl Display for Element {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        use StyleElement::*;
+        use Element::*;
         f.write_str(match self {
             All => "all",
             GeometryAll => "geometry",

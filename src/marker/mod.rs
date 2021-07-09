@@ -1,10 +1,28 @@
-use crate::{Location, MarkerAppearence, MarkerScale, MarkerStyle, QueryStringable, RgbColor};
+mod appearance;
+mod icon;
+mod icon_anchor;
+mod label;
+mod position;
+mod scale;
+mod size;
+mod style;
+
+pub use appearance::*;
+pub use icon::*;
+pub use icon_anchor::*;
+pub use label::*;
+pub use position::*;
+pub use scale::*;
+pub use size::*;
+pub use style::*;
+
+use crate::{Location, QueryStringable, RgbColor};
 use std::fmt;
 
 #[derive(Clone)]
 pub struct Marker<S: AsRef<str> + Clone> {
-    appearence: Option<MarkerAppearence<S>>,
-    scale: Option<MarkerScale>,
+    appearence: Option<Appearence<S>>,
+    scale: Option<Scale>,
     locations: Vec<Location>,
 }
 
@@ -18,7 +36,7 @@ impl<S: AsRef<str> + Clone> Marker<S> {
     }
 
     pub fn simple(color: RgbColor, label: char, location: Location) -> Self {
-        let marker_style = MarkerStyle::new().color(color).label(label.into());
+        let marker_style = Style::new().color(color).label(label.into());
         Marker::new()
             .appearence(marker_style.into())
             .add_location(location)
@@ -34,12 +52,12 @@ impl<S: AsRef<str> + Clone> Marker<S> {
         self
     }
 
-    pub fn appearence(mut self, appearence: MarkerAppearence<S>) -> Marker<S> {
+    pub fn appearence(mut self, appearence: Appearence<S>) -> Marker<S> {
         self.appearence = Some(appearence);
         self
     }
 
-    pub fn scale(mut self, scale: MarkerScale) -> Marker<S> {
+    pub fn scale(mut self, scale: Scale) -> Marker<S> {
         self.scale = Some(scale);
         self
     }
@@ -89,15 +107,14 @@ impl<S: AsRef<str> + Clone> QueryStringable for Marker<S> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{MarkerIcon, RGB_BLUE};
+    use crate::{marker::Icon, marker::Style, RGB_BLUE};
 
     use super::*;
-    use crate::MarkerStyle;
 
     #[test]
     fn it_builds_a_complete_style() {
-        let marker_appearence: MarkerAppearence<String> =
-            MarkerStyle::new().color(RGB_BLUE).label('S'.into()).into();
+        let marker_appearence: Appearence<String> =
+            Style::new().color(RGB_BLUE).label('S'.into()).into();
         let marker = Marker::new()
             .appearence(marker_appearence)
             .add_location("11211".into())
@@ -108,7 +125,7 @@ mod tests {
 
     #[test]
     fn it_builds_a_complete_style_2() {
-        let marker_appearence: MarkerAppearence<&str> = MarkerIcon::new("https://goo.gl/5y3S82")
+        let marker_appearence: Appearence<&str> = Icon::new("https://goo.gl/5y3S82")
             .position((32, 10).into())
             .into();
         let marker = Marker::new()

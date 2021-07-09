@@ -1,4 +1,5 @@
-use crate::{RgbColor, StyleRuleVisibility};
+use super::RuleVisibility;
+use crate::RgbColor;
 use std::fmt::{Display, Formatter, Result};
 
 /// Style rule transformations to create custom map styles.
@@ -11,7 +12,7 @@ use std::fmt::{Display, Formatter, Result};
 /// Features and/or elements that are modified through style operations (usually) already
 /// have existing styles. The operations act on those existing styles, if present.
 #[derive(Clone)]
-pub enum StyleRule {
+pub enum Rule {
     /// Sets the hue that indicates the basic color.
     ///
     /// **Note**: This option sets the hue while keeping the saturation and lightness specified in
@@ -63,10 +64,10 @@ pub enum StyleRule {
 
     /// Sets the visibility which indicates whether and how the element appears on the map.
     ///
-    /// A [`StyleRuleVisibility::Simplified`] visibility removes some style
+    /// A [`RuleVisibility::Simplified`] visibility removes some style
     /// features from the affected features; roads, for example, are simplified into thinner lines without
     /// outlines, while parks lose their label text but retain the label icon.
-    Visibility(StyleRuleVisibility),
+    Visibility(RuleVisibility),
 
     /// Sets the color of the feature.
     Color(RgbColor),
@@ -76,15 +77,15 @@ pub enum StyleRule {
     Weight(u8),
 }
 
-impl From<StyleRuleVisibility> for StyleRule {
-    fn from(visibility: StyleRuleVisibility) -> Self {
+impl From<RuleVisibility> for Rule {
+    fn from(visibility: RuleVisibility) -> Self {
         Self::Visibility(visibility)
     }
 }
 
-impl Display for StyleRule {
+impl Display for Rule {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        use StyleRule::*;
+        use Rule::*;
         write!(
             f,
             "{}",
