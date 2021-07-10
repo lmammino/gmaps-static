@@ -2,8 +2,10 @@ use gmaps_static::*;
 
 fn main() {
     // Rebuilds URL from docs: https://developers.google.com/maps/documentation/maps-static/styling
+    let credentials = Credentials::try_from_env("API_KEY", "SECRET_KEY")
+        .unwrap_or_else(|_| String::from("YOUR_API_KEY").into());
 
-    let map = Builder::new("YOUR_API_KEY".into(), (512, 512).into())
+    let map = Builder::new(credentials, (512, 512).into())
         .zoom(ZOOM_15)
         .center("Brooklyn".into())
         .add_style(

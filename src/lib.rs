@@ -42,8 +42,8 @@ extern crate lazy_static;
 pub trait AllStr: std::convert::AsRef<str> + std::clone::Clone {}
 
 #[derive(Clone)]
-pub struct Builder<S: AsRef<str> + Clone> {
-    credentials: Credentials<S>,
+pub struct Builder {
+    credentials: Credentials,
     size: Size,
     center: Option<Center>,
     zoom: Option<Zoom>,
@@ -52,17 +52,17 @@ pub struct Builder<S: AsRef<str> + Clone> {
     maptype: Option<MapType>,
     language: Option<Language>,
     region: Option<Region>,
-    markers: Vec<marker::Marker<S>>,
+    markers: Vec<marker::Marker>,
     paths: Vec<Path>,
     visible: Vec<Visible>,
-    mapid: Option<style::MapId<S>>,
+    mapid: Option<style::MapId>,
     styles: Vec<style::Style>,
 }
 
 const BASE_URL: &str = "https://maps.googleapis.com/maps/api/staticmap";
 
-impl<S: AsRef<str> + Clone> Builder<S> {
-    pub fn new(credentials: Credentials<S>, size: Size) -> Self {
+impl Builder {
+    pub fn new(credentials: Credentials, size: Size) -> Self {
         Builder {
             credentials,
             size,
@@ -116,12 +116,12 @@ impl<S: AsRef<str> + Clone> Builder<S> {
         self
     }
 
-    pub fn markers(mut self, markers: Vec<marker::Marker<S>>) -> Self {
+    pub fn markers(mut self, markers: Vec<marker::Marker>) -> Self {
         self.markers = markers;
         self
     }
 
-    pub fn add_marker(mut self, marker: marker::Marker<S>) -> Self {
+    pub fn add_marker(mut self, marker: marker::Marker) -> Self {
         self.markers.push(marker);
         self
     }
@@ -146,7 +146,7 @@ impl<S: AsRef<str> + Clone> Builder<S> {
         self
     }
 
-    pub fn mapid(mut self, mapid: style::MapId<S>) -> Self {
+    pub fn mapid(mut self, mapid: style::MapId) -> Self {
         self.mapid = Some(mapid);
         self
     }

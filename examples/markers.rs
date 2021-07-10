@@ -11,7 +11,10 @@ fn main() {
     // &markers=size:tiny%7Ccolor:green%7CDelta+Junction,AK
     // &markers=size:mid%7Ccolor:0xFFFF00%7Clabel:C%7CTok,AK"
     // &key=YOUR_API_KEY
-    let map = Builder::new("YOUR_API_KEY".into(), (400, 400).into())
+    let credentials = Credentials::try_from_env("API_KEY", "SECRET_KEY")
+        .unwrap_or_else(|_| String::from("YOUR_API_KEY").into());
+
+    let map = Builder::new(credentials, (400, 400).into())
         .center((63.259591, -144.667969).into())
         .zoom(ZOOM_6)
         .add_marker(marker::Marker::simple(

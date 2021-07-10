@@ -20,13 +20,13 @@ use crate::{Location, QueryStringable, RgbColor};
 use std::fmt;
 
 #[derive(Clone)]
-pub struct Marker<S: AsRef<str> + Clone> {
-    appearence: Option<Appearence<S>>,
+pub struct Marker {
+    appearence: Option<Appearence>,
     scale: Option<Scale>,
     locations: Vec<Location>,
 }
 
-impl<S: AsRef<str> + Clone> Marker<S> {
+impl Marker {
     pub fn new() -> Self {
         Marker {
             appearence: None,
@@ -42,34 +42,34 @@ impl<S: AsRef<str> + Clone> Marker<S> {
             .add_location(location)
     }
 
-    pub fn locations(mut self, locations: Vec<Location>) -> Marker<S> {
+    pub fn locations(mut self, locations: Vec<Location>) -> Marker {
         self.locations = locations;
         self
     }
 
-    pub fn add_location(mut self, location: Location) -> Marker<S> {
+    pub fn add_location(mut self, location: Location) -> Marker {
         self.locations.push(location);
         self
     }
 
-    pub fn appearence(mut self, appearence: Appearence<S>) -> Marker<S> {
+    pub fn appearence(mut self, appearence: Appearence) -> Marker {
         self.appearence = Some(appearence);
         self
     }
 
-    pub fn scale(mut self, scale: Scale) -> Marker<S> {
+    pub fn scale(mut self, scale: Scale) -> Marker {
         self.scale = Some(scale);
         self
     }
 }
 
-impl<S: AsRef<str> + Clone> Default for Marker<S> {
+impl<'a> Default for Marker {
     fn default() -> Self {
         Marker::new()
     }
 }
 
-impl<S: AsRef<str> + Clone> From<Location> for Marker<S> {
+impl<'a> From<Location> for Marker {
     fn from(location: Location) -> Self {
         Marker {
             appearence: None,
@@ -79,7 +79,7 @@ impl<S: AsRef<str> + Clone> From<Location> for Marker<S> {
     }
 }
 
-impl<S: AsRef<str> + Clone> fmt::Display for Marker<S> {
+impl fmt::Display for Marker {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut parts: Vec<String> = vec![];
 
@@ -99,7 +99,7 @@ impl<S: AsRef<str> + Clone> fmt::Display for Marker<S> {
     }
 }
 
-impl<S: AsRef<str> + Clone> QueryStringable for Marker<S> {
+impl QueryStringable for Marker {
     fn as_query_params(&self) -> Vec<(String, String)> {
         vec![("markers".to_string(), self.to_string())]
     }
@@ -113,8 +113,7 @@ mod tests {
 
     #[test]
     fn it_builds_a_complete_style() {
-        let marker_appearence: Appearence<String> =
-            Style::new().color(RGB_BLUE).label('S'.into()).into();
+        let marker_appearence: Appearence = Style::new().color(RGB_BLUE).label('S'.into()).into();
         let marker = Marker::new()
             .appearence(marker_appearence)
             .add_location("11211".into())
@@ -125,7 +124,7 @@ mod tests {
 
     #[test]
     fn it_builds_a_complete_style_2() {
-        let marker_appearence: Appearence<&str> = Icon::new("https://goo.gl/5y3S82")
+        let marker_appearence: Appearence = Icon::new("https://goo.gl/5y3S82")
             .anchor((32, 10).into())
             .into();
         let marker = Marker::new()

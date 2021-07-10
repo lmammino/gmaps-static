@@ -12,7 +12,11 @@ fn main() {
     // &markers=anchor:topleft%7Cicon:http://tinyurl.com/jrhlvu6%7CMelbourne+VIC
     // &markers=anchor:topright%7Cicon:https://goo.gl/1oTJ9Y%7CSydney+NSW
     // &key=YOUR_API_KEY
-    let map = Builder::new("YOUR_API_KEY".into(), (600, 400).into())
+
+    let credentials = Credentials::try_from_env("API_KEY", "SECRET_KEY")
+        .unwrap_or_else(|_| String::from("YOUR_API_KEY").into());
+
+    let map = Builder::new(credentials, (600, 400).into())
         .add_style(style::Style::new().add_rule(style::VISIBILITY_ON.into()))
         .add_style(
             style::Style::new()

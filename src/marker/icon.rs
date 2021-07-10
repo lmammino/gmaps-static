@@ -3,20 +3,23 @@ use std::fmt;
 use super::IconAnchor;
 
 #[derive(Clone)]
-pub struct Icon<S: AsRef<str> + Clone> {
+pub struct Icon {
     anchor: Option<IconAnchor>,
-    url: S,
+    url: String,
 }
 
-impl<S: AsRef<str> + Clone> Icon<S> {
-    pub fn new(url: S) -> Self {
-        Icon { anchor: None, url }
+impl Icon {
+    pub fn new<S: AsRef<str>>(url: S) -> Self {
+        Icon {
+            anchor: None,
+            url: String::from(url.as_ref()),
+        }
     }
 
-    pub fn with_anchor(url: S, anchor: IconAnchor) -> Self {
+    pub fn with_anchor<S: AsRef<str>>(url: S, anchor: IconAnchor) -> Self {
         Icon {
             anchor: Some(anchor),
-            url,
+            url: String::from(url.as_ref()),
         }
     }
 
@@ -26,15 +29,15 @@ impl<S: AsRef<str> + Clone> Icon<S> {
     }
 }
 
-impl<S: AsRef<str> + Clone> fmt::Display for Icon<S> {
+impl fmt::Display for Icon {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut parts: Vec<String> = vec![];
 
         if let Some(anchor) = &self.anchor {
-            parts.push(format!("anchor:{}", anchor.to_string()));
+            parts.push(format!("anchor:{}", anchor));
         }
 
-        parts.push(format!("icon:{}", self.url.as_ref()));
+        parts.push(format!("icon:{}", self.url));
 
         write!(f, "{}", parts.join("|"))
     }
