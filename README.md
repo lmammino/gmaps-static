@@ -51,6 +51,7 @@ https://maps.googleapis.com/maps/api/staticmap?size=400x300&center=Colosseo&scal
  - [x] styled maps
    - [x] support for `map_id` parameter
    - [x] support for URL-based styles (`style` parameter)
+ - [ ] [Clientid authentication](https://developers.google.com/maps/premium/apikey/maps-static-apikey#generating_valid_signatures)
 
 
 ## TODO list pre-1.0.0
@@ -59,7 +60,7 @@ https://maps.googleapis.com/maps/api/staticmap?size=400x300&center=Colosseo&scal
  - [x] Remove immutability and implement `clone()` in builder struct
  - [ ] Better error management
  - [ ] Proper crate documentation
- - [ ] Examples
+ - [x] Examples
  - [ ] More test (support for all examples in the official docs)
 
 

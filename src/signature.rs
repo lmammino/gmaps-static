@@ -30,8 +30,8 @@ mod tests {
     #[test]
     fn it_signs_a_url() {
         let url = Url::parse(
-            "https://maps.googleapis.com/maps/api/staticmap?\
-        center=Brooklyn+Bridge%2CNew+York%2CNY\
+            "https://maps.googleapis.com/maps/api/staticmap\
+        ?center=Brooklyn+Bridge%2CNew+York%2CNY\
         &zoom=13\
         &size=600x300\
         &maptype=roadmap\
