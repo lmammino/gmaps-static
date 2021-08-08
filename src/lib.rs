@@ -31,6 +31,7 @@ pub use rgba_color::*;
 pub use scale::*;
 pub use signature::*;
 pub use size::*;
+pub use style::*;
 pub use visible::*;
 pub use zoom::*;
 
