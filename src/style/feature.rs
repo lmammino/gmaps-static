@@ -7,14 +7,14 @@ use std::fmt::{Display, Formatter, Result};
 /// all features are selected. Specifying a feature of all has the same effect.
 ///
 /// Some features contain child features you specify using a dot notation. For example,
-/// [`StyleFeature::LandscapeNaturalAll`] or [`StyleFeature::RoadLocal`]. If you specify only the parent
-/// feature, such as [`StyleFeature::RoadAll`], the styles you specify for the parent apply to all its
-/// children, such as [`StyleFeature::RoadLocal`] and [`StyleFeature::RoadHighwayAll`].
+/// [`Feature::LandscapeNaturalAll`] or [`Feature::RoadLocal`]. If you specify only the parent
+/// feature, such as [`Feature::RoadAll`], the styles you specify for the parent apply to all its
+/// children, such as [`Feature::RoadLocal`] and [`Feature::RoadHighwayAll`].
 ///
 /// Note that parent features may include some elements that are not included in all of
 /// their child features.
 #[derive(Clone)]
-pub enum StyleFeature {
+pub enum Feature {
     /// `all` (default) selects all features.
     All,
     /// `administrative` selects all administrative areas. Styling affects only the labels of administrative areas, not the geographical borders or fill.
@@ -83,9 +83,9 @@ pub enum StyleFeature {
     WaterAll,
 }
 
-impl Display for StyleFeature {
+impl Display for Feature {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        use StyleFeature::*;
+        use Feature::*;
         f.write_str(match self {
             All => "all",
             AdminAll => "administrative",

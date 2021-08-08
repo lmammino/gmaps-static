@@ -1,4 +1,4 @@
-# GMapsStatic
+# gmaps_static
 
 [![Rust](https://github.com/lmammino/gmaps-static/actions/workflows/Rust.yml/badge.svg)](https://github.com/lmammino/gmaps-static/actions/workflows/Rust.yml)
 [![codecov](https://codecov.io/gh/lmammino/gmaps-static/branch/main/graph/badge.svg?token=4CNbvgaDc1)](https://codecov.io/gh/lmammino/gmaps-static)
@@ -11,9 +11,9 @@ Work in progress...
 ## Example
 
 ```rust
-use GMapsStatic::*;
+use gmaps_static::*;
 
-let map = UrlBuilder::new("YOUR_API_KEY".into(), (400, 300).into())
+let map = Map::new("YOUR_API_KEY".into(), (400, 300).into())
     .scale(SCALE2)
     .center("Colosseo".into())
     .zoom(STREETS)
@@ -22,7 +22,7 @@ let map = UrlBuilder::new("YOUR_API_KEY".into(), (400, 300).into())
     .region("it".into())
     .language("it".into());
 
-println!("{}", map.make_url());
+println!("{}", map.url());
 ```
 
 This will generate the following URL:
@@ -51,6 +51,7 @@ https://maps.googleapis.com/maps/api/staticmap?size=400x300&center=Colosseo&scal
  - [x] styled maps
    - [x] support for `map_id` parameter
    - [x] support for URL-based styles (`style` parameter)
+ - [ ] [Clientid authentication](https://developers.google.com/maps/premium/apikey/maps-static-apikey#generating_valid_signatures)
 
 
 ## TODO list pre-1.0.0
@@ -59,6 +60,7 @@ https://maps.googleapis.com/maps/api/staticmap?size=400x300&center=Colosseo&scal
  - [x] Remove immutability and implement `clone()` in builder struct
  - [ ] Better error management
  - [ ] Proper crate documentation
+ - [x] Examples
  - [ ] More test (support for all examples in the official docs)
 
 

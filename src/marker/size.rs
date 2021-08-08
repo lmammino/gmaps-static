@@ -1,20 +1,20 @@
 use std::fmt;
 use std::str::FromStr;
 
-pub const TINY: MarkerSize = MarkerSize::Tiny;
-pub const MID: MarkerSize = MarkerSize::Mid;
-pub const SMALL: MarkerSize = MarkerSize::Small;
+pub const TINY: Size = Size::Tiny;
+pub const MID: Size = Size::Mid;
+pub const SMALL: Size = Size::Small;
 
 #[derive(Clone)]
-pub enum MarkerSize {
+pub enum Size {
     Tiny,
     Mid,
     Small,
 }
 
-impl fmt::Display for MarkerSize {
+impl fmt::Display for Size {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use MarkerSize::*;
+        use Size::*;
         write!(
             f,
             "{}",
@@ -27,11 +27,11 @@ impl fmt::Display for MarkerSize {
     }
 }
 
-impl FromStr for MarkerSize {
+impl FromStr for Size {
     type Err = String;
 
-    fn from_str(input: &str) -> Result<MarkerSize, Self::Err> {
-        use MarkerSize::*;
+    fn from_str(input: &str) -> Result<Size, Self::Err> {
+        use Size::*;
         match input {
             "tiny" => Ok(Tiny),
             "mid" => Ok(Mid),

@@ -1,52 +1,31 @@
 mod center;
 mod credentials;
 mod format;
-mod icon_anchor;
 mod language;
 mod location;
-mod mapid;
 mod maptype;
-mod marker;
-mod marker_appearence;
-mod marker_color;
-mod marker_icon;
-mod marker_label;
-mod marker_scale;
-mod marker_size;
-mod marker_style;
+pub mod marker;
 mod path;
 mod querystringable;
 mod region;
-mod relative_position;
 mod rgb_color;
 mod rgba_color;
 mod scale;
 mod signature;
 mod size;
-mod style;
+pub mod style;
 mod visible;
 mod zoom;
 
 pub use center::*;
 pub use credentials::*;
 pub use format::*;
-pub use icon_anchor::*;
 pub use language::*;
 pub use location::*;
-pub use mapid::*;
 pub use maptype::*;
-pub use marker::*;
-pub use marker_appearence::*;
-pub use marker_color::*;
-pub use marker_icon::*;
-pub use marker_label::*;
-pub use marker_scale::*;
-pub use marker_size::*;
-pub use marker_style::*;
 pub use path::*;
 pub use querystringable::*;
 pub use region::*;
-pub use relative_position::*;
 pub use rgb_color::*;
 pub use rgba_color::*;
 pub use scale::*;
@@ -64,8 +43,8 @@ extern crate lazy_static;
 pub trait AllStr: std::convert::AsRef<str> + std::clone::Clone {}
 
 #[derive(Clone)]
-pub struct UrlBuilder<S: AsRef<str> + Clone> {
-    credentials: Credentials<S>,
+pub struct Map {
+    credentials: Credentials,
     size: Size,
     center: Option<Center>,
     zoom: Option<Zoom>,
@@ -74,18 +53,18 @@ pub struct UrlBuilder<S: AsRef<str> + Clone> {
     maptype: Option<MapType>,
     language: Option<Language>,
     region: Option<Region>,
-    markers: Vec<Marker<S>>,
+    markers: Vec<marker::Marker>,
     paths: Vec<Path>,
     visible: Vec<Visible>,
-    mapid: Option<MapId<S>>,
-    styles: Vec<Style>,
+    mapid: Option<style::MapId>,
+    styles: Vec<style::Style>,
 }
 
 const BASE_URL: &str = "https://maps.googleapis.com/maps/api/staticmap";
 
-impl<S: AsRef<str> + Clone> UrlBuilder<S> {
-    pub fn new(credentials: Credentials<S>, size: Size) -> Self {
-        UrlBuilder {
+impl Map {
+    pub fn new(credentials: Credentials, size: Size) -> Self {
+        Map {
             credentials,
             size,
             center: None,
@@ -138,12 +117,12 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         self
     }
 
-    pub fn markers(mut self, markers: Vec<Marker<S>>) -> Self {
+    pub fn markers(mut self, markers: Vec<marker::Marker>) -> Self {
         self.markers = markers;
         self
     }
 
-    pub fn add_marker(mut self, marker: Marker<S>) -> Self {
+    pub fn add_marker(mut self, marker: marker::Marker) -> Self {
         self.markers.push(marker);
         self
     }
@@ -168,22 +147,22 @@ impl<S: AsRef<str> + Clone> UrlBuilder<S> {
         self
     }
 
-    pub fn mapid(mut self, mapid: MapId<S>) -> Self {
+    pub fn mapid(mut self, mapid: style::MapId) -> Self {
         self.mapid = Some(mapid);
         self
     }
 
-    pub fn styles(mut self, styles: Vec<Style>) -> Self {
+    pub fn styles(mut self, styles: Vec<style::Style>) -> Self {
         self.styles = styles;
         self
     }
 
-    pub fn add_style(mut self, style: Style) -> Self {
+    pub fn add_style(mut self, style: style::Style) -> Self {
         self.styles.push(style);
         self
     }
 
-    pub fn make_url(&self) -> String {
+    pub fn url(&self) -> String {
         // TODO: make this method fallible and return an error if there's no (center+zoom) and no marker
         let mut url = Url::parse(BASE_URL).unwrap();
 
@@ -237,9 +216,9 @@ mod tests {
 
     #[test]
     fn it_builds_a_simple_url() {
-        let map = UrlBuilder::new("YOUR_API_KEY".into(), (50, 50).into());
+        let map = Map::new("YOUR_API_KEY".into(), (50, 50).into());
 
-        let generated_url = qs_from_url(map.make_url());
+        let generated_url = qs_from_url(map.url());
         let expected_url = qs_from_url(
             "https://maps.googleapis.com/maps/api/staticmap?size=50x50&key=YOUR_API_KEY"
                 .to_string(),
@@ -251,9 +230,9 @@ mod tests {
     fn it_builds_a_url_with_a_signature_if_secret_is_used() {
         let credentials =
             Credentials::with_secret_key("YOUR_API_KEY", "X8XXXxxxxxXwrIEQfguOVNGv2jY=");
-        let map = UrlBuilder::new(credentials, (50, 50).into());
+        let map = Map::new(credentials, (50, 50).into());
 
-        let generated_url = qs_from_url(map.make_url());
+        let generated_url = qs_from_url(map.url());
         let expected_url = qs_from_url(
             "https://maps.googleapis.com/maps/api/staticmap?size=50x50&key=YOUR_API_KEY&signature=Ig1D2O-jLfIGKJaO7SWeWVvLwR4%3D"
                 .to_string(),
@@ -263,7 +242,7 @@ mod tests {
 
     #[test]
     fn it_builds_a_more_complete_url() {
-        let map = UrlBuilder::new("YOUR_API_KEY".into(), (400, 300).into())
+        let map = Map::new("YOUR_API_KEY".into(), (400, 300).into())
             .scale(SCALE2)
             .center("Colosseo".into())
             .zoom(STREETS)
@@ -272,7 +251,7 @@ mod tests {
             .region("it".into())
             .language("it".into());
 
-        let generated_url = qs_from_url(map.make_url());
+        let generated_url = qs_from_url(map.url());
         let expected_url = qs_from_url(
             "https://maps.googleapis.com/maps/api/staticmap?\
             size=400x300\
@@ -291,16 +270,16 @@ mod tests {
 
     #[test]
     fn it_builds_a_more_complete_url_2() {
-        let marker1 = Marker::simple(RGB_BLUE, 'S', (40.702147, -74.015794).into());
-        let marker2 = Marker::simple(RGB_GREEN, 'G', (40.711614, -74.012318).into());
-        let marker3 = Marker::simple(RGB_RED, 'C', (40.718217, -73.998284).into());
+        let marker1 = marker::Marker::simple(RGB_BLUE, 'S', (40.702147, -74.015794).into());
+        let marker2 = marker::Marker::simple(RGB_GREEN, 'G', (40.711614, -74.012318).into());
+        let marker3 = marker::Marker::simple(RGB_RED, 'C', (40.718217, -73.998284).into());
 
         let path = Path::default()
             .color((0, 0, 255, 255).into())
             .weight(2_u8)
             .add_point((40.737102, -73.990318).into());
 
-        let map = UrlBuilder::new("YOUR_API_KEY".into(), (600, 300).into())
+        let map = Map::new("YOUR_API_KEY".into(), (600, 300).into())
             .center("Brooklyn Bridge,New York,NY".into())
             .zoom(ZOOM_13)
             .maptype(ROADMAP)
@@ -310,13 +289,13 @@ mod tests {
             .add_path(path)
             .add_visible("Dumbo Brooklyn, NY 11201".into())
             .add_style(
-                Style::new()
-                    .element(StyleElement::LabelsTextAll)
-                    .add_rule(StyleRule::Color((0, 255, 0).into())),
+                style::Style::new()
+                    .element(style::Element::LabelsTextAll)
+                    .add_rule(style::Rule::Color((0, 255, 0).into())),
             )
             .mapid("8f348d1b5a61d4bb".into());
 
-        let generated_url = qs_from_url(map.make_url());
+        let generated_url = qs_from_url(map.url());
         let expected_url = qs_from_url(
             "https://maps.googleapis.com/maps/api/staticmap?\
         center=Brooklyn+Bridge%2CNew+York%2CNY\

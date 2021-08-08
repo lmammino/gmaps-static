@@ -1,19 +1,19 @@
 use std::fmt::{Display, Formatter, Result};
 
-pub const STYLE_VISIBILITY_ON: StyleRuleVisibility = StyleRuleVisibility::On;
-pub const STYLE_VISIBILITY_OFF: StyleRuleVisibility = StyleRuleVisibility::Off;
-pub const STYLE_VISIBILITY_SIMPLIFIED: StyleRuleVisibility = StyleRuleVisibility::Simplified;
+pub const VISIBILITY_ON: RuleVisibility = RuleVisibility::On;
+pub const VISIBILITY_OFF: RuleVisibility = RuleVisibility::Off;
+pub const VISIBILITY_SIMPLIFIED: RuleVisibility = RuleVisibility::Simplified;
 
 #[derive(Clone)]
-pub enum StyleRuleVisibility {
+pub enum RuleVisibility {
     On,
     Off,
     Simplified,
 }
 
-impl Display for StyleRuleVisibility {
+impl Display for RuleVisibility {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        use StyleRuleVisibility::*;
+        use RuleVisibility::*;
         f.write_str(match self {
             On => "on",
             Off => "off",

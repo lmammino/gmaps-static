@@ -1,14 +1,32 @@
-use crate::{Location, MarkerAppearence, MarkerScale, MarkerStyle, QueryStringable, RgbColor};
+mod appearance;
+mod icon;
+mod icon_anchor;
+mod label;
+mod position;
+mod scale;
+mod size;
+mod style;
+
+pub use appearance::*;
+pub use icon::*;
+pub use icon_anchor::*;
+pub use label::*;
+pub use position::*;
+pub use scale::*;
+pub use size::*;
+pub use style::*;
+
+use crate::{Location, QueryStringable, RgbColor};
 use std::fmt;
 
 #[derive(Clone)]
-pub struct Marker<S: AsRef<str> + Clone> {
-    appearence: Option<MarkerAppearence<S>>,
-    scale: Option<MarkerScale>,
+pub struct Marker {
+    appearence: Option<Appearence>,
+    scale: Option<Scale>,
     locations: Vec<Location>,
 }
 
-impl<S: AsRef<str> + Clone> Marker<S> {
+impl Marker {
     pub fn new() -> Self {
         Marker {
             appearence: None,
@@ -18,40 +36,40 @@ impl<S: AsRef<str> + Clone> Marker<S> {
     }
 
     pub fn simple(color: RgbColor, label: char, location: Location) -> Self {
-        let marker_style = MarkerStyle::new().color(color).label(label.into());
+        let marker_style = Style::new().color(color).label(label.into());
         Marker::new()
             .appearence(marker_style.into())
             .add_location(location)
     }
 
-    pub fn locations(mut self, locations: Vec<Location>) -> Marker<S> {
+    pub fn locations(mut self, locations: Vec<Location>) -> Marker {
         self.locations = locations;
         self
     }
 
-    pub fn add_location(mut self, location: Location) -> Marker<S> {
+    pub fn add_location(mut self, location: Location) -> Marker {
         self.locations.push(location);
         self
     }
 
-    pub fn appearence(mut self, appearence: MarkerAppearence<S>) -> Marker<S> {
+    pub fn appearence(mut self, appearence: Appearence) -> Marker {
         self.appearence = Some(appearence);
         self
     }
 
-    pub fn scale(mut self, scale: MarkerScale) -> Marker<S> {
+    pub fn scale(mut self, scale: Scale) -> Marker {
         self.scale = Some(scale);
         self
     }
 }
 
-impl<S: AsRef<str> + Clone> Default for Marker<S> {
+impl<'a> Default for Marker {
     fn default() -> Self {
         Marker::new()
     }
 }
 
-impl<S: AsRef<str> + Clone> From<Location> for Marker<S> {
+impl<'a> From<Location> for Marker {
     fn from(location: Location) -> Self {
         Marker {
             appearence: None,
@@ -61,7 +79,7 @@ impl<S: AsRef<str> + Clone> From<Location> for Marker<S> {
     }
 }
 
-impl<S: AsRef<str> + Clone> fmt::Display for Marker<S> {
+impl fmt::Display for Marker {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut parts: Vec<String> = vec![];
 
@@ -81,7 +99,7 @@ impl<S: AsRef<str> + Clone> fmt::Display for Marker<S> {
     }
 }
 
-impl<S: AsRef<str> + Clone> QueryStringable for Marker<S> {
+impl QueryStringable for Marker {
     fn as_query_params(&self) -> Vec<(String, String)> {
         vec![("markers".to_string(), self.to_string())]
     }
@@ -89,15 +107,13 @@ impl<S: AsRef<str> + Clone> QueryStringable for Marker<S> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{MarkerIcon, RGB_BLUE};
+    use crate::{marker::Icon, marker::Style, RGB_BLUE};
 
     use super::*;
-    use crate::MarkerStyle;
 
     #[test]
     fn it_builds_a_complete_style() {
-        let marker_appearence: MarkerAppearence<String> =
-            MarkerStyle::new().color(RGB_BLUE).label('S'.into()).into();
+        let marker_appearence: Appearence = Style::new().color(RGB_BLUE).label('S'.into()).into();
         let marker = Marker::new()
             .appearence(marker_appearence)
             .add_location("11211".into())
@@ -108,8 +124,8 @@ mod tests {
 
     #[test]
     fn it_builds_a_complete_style_2() {
-        let marker_appearence: MarkerAppearence<&str> = MarkerIcon::new("https://goo.gl/5y3S82")
-            .position((32, 10).into())
+        let marker_appearence: Appearence = Icon::new("https://goo.gl/5y3S82")
+            .anchor((32, 10).into())
             .into();
         let marker = Marker::new()
             .appearence(marker_appearence)

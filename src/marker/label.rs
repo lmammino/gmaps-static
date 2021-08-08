@@ -3,15 +3,15 @@ use std::ops::RangeInclusive;
 use std::str::FromStr;
 
 #[derive(Clone)]
-pub struct MarkerLabel(char);
+pub struct Label(char);
 
-impl MarkerLabel {
+impl Label {
     pub fn new(label: char) -> Result<Self, String> {
         let label = label.to_ascii_uppercase();
         if RangeInclusive::new('A', 'Z').contains(&label)
             || RangeInclusive::new('0', '9').contains(&label)
         {
-            return Ok(MarkerLabel(label));
+            return Ok(Label(label));
         }
 
         Err(format!(
@@ -21,7 +21,7 @@ impl MarkerLabel {
     }
 }
 
-impl FromStr for MarkerLabel {
+impl FromStr for Label {
     type Err = String;
 
     fn from_str(label: &str) -> Result<Self, Self::Err> {
@@ -32,17 +32,17 @@ impl FromStr for MarkerLabel {
             ));
         }
 
-        MarkerLabel::new(label.chars().next().unwrap())
+        Label::new(label.chars().next().unwrap())
     }
 }
 
-impl From<char> for MarkerLabel {
+impl From<char> for Label {
     fn from(c: char) -> Self {
-        MarkerLabel::new(c).unwrap()
+        Label::new(c).unwrap()
     }
 }
 
-impl fmt::Display for MarkerLabel {
+impl fmt::Display for Label {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.0)
     }
