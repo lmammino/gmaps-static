@@ -1,4 +1,4 @@
-# GMapsStatic
+# gmaps_static
 
 [![Rust](https://github.com/lmammino/gmaps-static/actions/workflows/Rust.yml/badge.svg)](https://github.com/lmammino/gmaps-static/actions/workflows/Rust.yml)
 [![codecov](https://codecov.io/gh/lmammino/gmaps-static/branch/main/graph/badge.svg?token=4CNbvgaDc1)](https://codecov.io/gh/lmammino/gmaps-static)
