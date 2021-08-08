@@ -13,7 +13,7 @@ Work in progress...
 ```rust
 use gmaps_static::*;
 
-let map = Builder::new("YOUR_API_KEY".into(), (400, 300).into())
+let map = Map::new("YOUR_API_KEY".into(), (400, 300).into())
     .scale(SCALE2)
     .center("Colosseo".into())
     .zoom(STREETS)
@@ -22,7 +22,7 @@ let map = Builder::new("YOUR_API_KEY".into(), (400, 300).into())
     .region("it".into())
     .language("it".into());
 
-println!("{}", map.make_url());
+println!("{}", map.url());
 ```
 
 This will generate the following URL:

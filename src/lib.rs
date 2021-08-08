@@ -43,7 +43,7 @@ extern crate lazy_static;
 pub trait AllStr: std::convert::AsRef<str> + std::clone::Clone {}
 
 #[derive(Clone)]
-pub struct Builder {
+pub struct Map {
     credentials: Credentials,
     size: Size,
     center: Option<Center>,
@@ -62,9 +62,9 @@ pub struct Builder {
 
 const BASE_URL: &str = "https://maps.googleapis.com/maps/api/staticmap";
 
-impl Builder {
+impl Map {
     pub fn new(credentials: Credentials, size: Size) -> Self {
-        Builder {
+        Map {
             credentials,
             size,
             center: None,
@@ -162,7 +162,7 @@ impl Builder {
         self
     }
 
-    pub fn make_url(&self) -> String {
+    pub fn url(&self) -> String {
         // TODO: make this method fallible and return an error if there's no (center+zoom) and no marker
         let mut url = Url::parse(BASE_URL).unwrap();
 
@@ -216,9 +216,9 @@ mod tests {
 
     #[test]
     fn it_builds_a_simple_url() {
-        let map = Builder::new("YOUR_API_KEY".into(), (50, 50).into());
+        let map = Map::new("YOUR_API_KEY".into(), (50, 50).into());
 
-        let generated_url = qs_from_url(map.make_url());
+        let generated_url = qs_from_url(map.url());
         let expected_url = qs_from_url(
             "https://maps.googleapis.com/maps/api/staticmap?size=50x50&key=YOUR_API_KEY"
                 .to_string(),
@@ -230,9 +230,9 @@ mod tests {
     fn it_builds_a_url_with_a_signature_if_secret_is_used() {
         let credentials =
             Credentials::with_secret_key("YOUR_API_KEY", "X8XXXxxxxxXwrIEQfguOVNGv2jY=");
-        let map = Builder::new(credentials, (50, 50).into());
+        let map = Map::new(credentials, (50, 50).into());
 
-        let generated_url = qs_from_url(map.make_url());
+        let generated_url = qs_from_url(map.url());
         let expected_url = qs_from_url(
             "https://maps.googleapis.com/maps/api/staticmap?size=50x50&key=YOUR_API_KEY&signature=Ig1D2O-jLfIGKJaO7SWeWVvLwR4%3D"
                 .to_string(),
@@ -242,7 +242,7 @@ mod tests {
 
     #[test]
     fn it_builds_a_more_complete_url() {
-        let map = Builder::new("YOUR_API_KEY".into(), (400, 300).into())
+        let map = Map::new("YOUR_API_KEY".into(), (400, 300).into())
             .scale(SCALE2)
             .center("Colosseo".into())
             .zoom(STREETS)
@@ -251,7 +251,7 @@ mod tests {
             .region("it".into())
             .language("it".into());
 
-        let generated_url = qs_from_url(map.make_url());
+        let generated_url = qs_from_url(map.url());
         let expected_url = qs_from_url(
             "https://maps.googleapis.com/maps/api/staticmap?\
             size=400x300\
@@ -279,7 +279,7 @@ mod tests {
             .weight(2_u8)
             .add_point((40.737102, -73.990318).into());
 
-        let map = Builder::new("YOUR_API_KEY".into(), (600, 300).into())
+        let map = Map::new("YOUR_API_KEY".into(), (600, 300).into())
             .center("Brooklyn Bridge,New York,NY".into())
             .zoom(ZOOM_13)
             .maptype(ROADMAP)
@@ -295,7 +295,7 @@ mod tests {
             )
             .mapid("8f348d1b5a61d4bb".into());
 
-        let generated_url = qs_from_url(map.make_url());
+        let generated_url = qs_from_url(map.url());
         let expected_url = qs_from_url(
             "https://maps.googleapis.com/maps/api/staticmap?\
         center=Brooklyn+Bridge%2CNew+York%2CNY\

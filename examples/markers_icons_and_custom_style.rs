@@ -16,7 +16,7 @@ fn main() {
     let credentials = Credentials::try_from_env("API_KEY", "SECRET_KEY")
         .unwrap_or_else(|_| String::from("YOUR_API_KEY").into());
 
-    let map = Builder::new(credentials, (600, 400).into())
+    let map = Map::new(credentials, (600, 400).into())
         .add_style(style::Style::new().add_rule(style::VISIBILITY_ON.into()))
         .add_style(
             style::Style::new()
@@ -58,5 +58,5 @@ fn main() {
                 ),
         );
 
-    println!("{}", map.make_url());
+    println!("{}", map.url());
 }

@@ -14,7 +14,7 @@ fn main() {
     let credentials = Credentials::try_from_env("API_KEY", "SECRET_KEY")
         .unwrap_or_else(|_| String::from("YOUR_API_KEY").into());
 
-    let map = Builder::new(credentials, (400, 400).into())
+    let map = Map::new(credentials, (400, 400).into())
         .center((63.259591, -144.667969).into())
         .zoom(ZOOM_6)
         .add_marker(marker::Marker::simple(
@@ -40,5 +40,5 @@ fn main() {
                 .add_location("Tok,AK".into()),
         );
 
-    println!("{}", map.make_url());
+    println!("{}", map.url());
 }
