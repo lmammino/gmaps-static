@@ -13,8 +13,8 @@ fn main() {
     // &style=feature%3Aroad.arterial%7Celement%3Alabels%7Cinvert_lightness%3Afalse
     // &key=YOUR_API_KEY
 
-    let credentials = Credentials::try_from_env("API_KEY", "SECRET_KEY")
-        .unwrap_or_else(|_| String::from("YOUR_API_KEY").into());
+    let credentials =
+        Credentials::try_from_default_env().unwrap_or_else(|_| String::from("YOUR_API_KEY").into());
 
     let map = Map::new(credentials, (512, 512).into())
         .zoom(ZOOM_15)

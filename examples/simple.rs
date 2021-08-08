@@ -12,8 +12,8 @@ fn main() {
     // &region=it
     // &key=YOUR_API_KEY
 
-    let credentials = Credentials::try_from_env("API_KEY", "SECRET_KEY")
-        .unwrap_or_else(|_| String::from("YOUR_API_KEY").into());
+    let credentials =
+        Credentials::try_from_default_env().unwrap_or_else(|_| String::from("YOUR_API_KEY").into());
 
     let map = Map::new(credentials, (400, 300).into())
         .scale(SCALE2)

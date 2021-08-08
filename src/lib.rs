@@ -1,5 +1,5 @@
 mod center;
-mod credentials;
+pub mod credentials;
 mod format;
 mod language;
 mod location;
@@ -11,7 +11,6 @@ mod region;
 mod rgb_color;
 mod rgba_color;
 mod scale;
-mod signature;
 mod size;
 pub mod style;
 mod visible;
@@ -29,7 +28,6 @@ pub use region::*;
 pub use rgb_color::*;
 pub use rgba_color::*;
 pub use scale::*;
-pub use signature::*;
 pub use size::*;
 pub use style::*;
 pub use visible::*;
@@ -39,8 +37,6 @@ use url::Url;
 
 #[macro_use]
 extern crate lazy_static;
-
-pub trait AllStr: std::convert::AsRef<str> + std::clone::Clone {}
 
 #[derive(Clone)]
 pub struct Map {
@@ -191,14 +187,17 @@ impl Map {
                     pairs.append_pair(key.as_str(), value.as_str());
                 });
 
-            pairs.append_pair("key", self.credentials.api_key.as_ref());
+            pairs.append_pair(
+                self.credentials.get_key_name().as_str(),
+                self.credentials.get_key().as_str(),
+            );
         }
 
         // If credentials has a secret_key, calculate and appends the signature
         // This must be the last query string parameters to be added (all the others need to
         // calculate the signature)
-        if let Some(secret) = &self.credentials.secret_key {
-            let signature = sign(&url, secret.as_ref());
+        if let Some(secret) = &self.credentials.get_secret() {
+            let signature = credentials::signature::sign(&url, secret.as_ref());
             url.query_pairs_mut()
                 .append_pair("signature", signature.as_str());
         }
@@ -235,6 +234,19 @@ mod tests {
         let generated_url = qs_from_url(map.url());
         let expected_url = qs_from_url(
             "https://maps.googleapis.com/maps/api/staticmap?size=50x50&key=YOUR_API_KEY&signature=Ig1D2O-jLfIGKJaO7SWeWVvLwR4%3D"
+                .to_string(),
+        );
+        assert_eq!(generated_url, expected_url);
+    }
+
+    #[test]
+    fn it_builds_a_url_with_a_client_id_and_a_signature() {
+        let credentials = Credentials::with_client("SOME_CLIENT", "X8XXXxxxxxXwrIEQfguOVNGv2jY=");
+        let map = Map::new(credentials, (50, 50).into());
+
+        let generated_url = qs_from_url(map.url());
+        let expected_url = qs_from_url(
+            "https://maps.googleapis.com/maps/api/staticmap?size=50x50&client=SOME_CLIENT&signature=JjKRHKA4I9ArnzbyZ32TuxzZ55s%3D"
                 .to_string(),
         );
         assert_eq!(generated_url, expected_url);

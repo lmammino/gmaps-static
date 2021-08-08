@@ -13,8 +13,8 @@ fn main() {
     // &markers=anchor:topright%7Cicon:https://goo.gl/1oTJ9Y%7CSydney+NSW
     // &key=YOUR_API_KEY
 
-    let credentials = Credentials::try_from_env("API_KEY", "SECRET_KEY")
-        .unwrap_or_else(|_| String::from("YOUR_API_KEY").into());
+    let credentials =
+        Credentials::try_from_default_env().unwrap_or_else(|_| String::from("YOUR_API_KEY").into());
 
     let map = Map::new(credentials, (600, 400).into())
         .add_style(style::Style::new().add_rule(style::VISIBILITY_ON.into()))
