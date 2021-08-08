@@ -196,8 +196,8 @@ impl Map {
         // If credentials has a secret_key, calculate and appends the signature
         // This must be the last query string parameters to be added (all the others need to
         // calculate the signature)
-        if let Some(secret) = &self.credentials.get_secret() {
-            let signature = credentials::signature::sign(&url, secret.as_ref());
+        if let Some(secret) = self.credentials.get_secret() {
+            let signature = credentials::sign(&url, secret);
             url.query_pairs_mut()
                 .append_pair("signature", signature.as_str());
         }
@@ -228,7 +228,7 @@ mod tests {
     #[test]
     fn it_builds_a_url_with_a_signature_if_secret_is_used() {
         let credentials =
-            Credentials::with_secret_key("YOUR_API_KEY", "X8XXXxxxxxXwrIEQfguOVNGv2jY=");
+            Credentials::with_secret_key("YOUR_API_KEY", "X8XXXxxxxxXwrIEQfguOVNGv2jY=").unwrap();
         let map = Map::new(credentials, (50, 50).into());
 
         let generated_url = qs_from_url(map.url());
@@ -241,7 +241,8 @@ mod tests {
 
     #[test]
     fn it_builds_a_url_with_a_client_id_and_a_signature() {
-        let credentials = Credentials::with_client("SOME_CLIENT", "X8XXXxxxxxXwrIEQfguOVNGv2jY=");
+        let credentials =
+            Credentials::with_client("SOME_CLIENT", "X8XXXxxxxxXwrIEQfguOVNGv2jY=").unwrap();
         let map = Map::new(credentials, (50, 50).into());
 
         let generated_url = qs_from_url(map.url());
