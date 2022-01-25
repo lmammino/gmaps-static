@@ -2,7 +2,7 @@
 name = "gmaps-static"
 version = "0.0.1"
 authors = ["Luciano Mammino"]
-edition = "2018"
+edition = "2021"
 description = "A URL builder for Google Maps Static APIs"
 keywords = ["google", "maps", "url", "builder", "static"]
 categories = ["api-bindings"]

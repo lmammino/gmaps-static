@@ -24,7 +24,7 @@ impl fmt::Display for IconAnchor {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use IconAnchor::*;
         match self {
-            Relative(position) => write!(f, "{}", position.to_string()),
+            Relative(position) => write!(f, "{}", position),
             Absolute(x, y) => write!(f, "{},{}", x, y),
         }
     }

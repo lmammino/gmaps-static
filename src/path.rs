@@ -64,7 +64,7 @@ impl Display for Path {
         let mut parts: Vec<String> = vec![];
 
         if let Some(color) = &self.color {
-            parts.push(format!("color:{}", color.to_string()));
+            parts.push(format!("color:{}", color));
         }
 
         if let Some(weight) = &self.weight {
@@ -72,7 +72,7 @@ impl Display for Path {
         }
 
         if let Some(fill_color) = &self.fill_color {
-            parts.push(format!("fillcolor:{}", fill_color.to_string()));
+            parts.push(format!("fillcolor:{}", fill_color));
         }
 
         if self.is_geodesic {
